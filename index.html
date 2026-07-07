@@ -10,7 +10,4739 @@
   :root {
     --bg: #0F1419;
     --bg-card: #1A1F2A;
+    --bg-elevated: #232936;<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Teman Diet — Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #0F1419;
+    --bg-card: #1A1F2A;
     --bg-elevated: #232936;
+    --text: #F5F1E8;
+    --text-muted: #8B92A0;
+    --accent: #E8B647;
+    --accent-soft: rgba(232, 182, 71, 0.12);
+    --success: #6FCF97;
+    --danger: #EB5757;
+    --warning: #F2994A;
+    --border: rgba(255,255,255,0.06);
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  /* iPhone Frame */
+  .phone {
+    width: 100%;
+    max-width: 414px;
+    min-height: 100vh;
+    background: var(--bg);
+    position: relative;
+    padding-bottom: 80px;
+  }
+
+  /* Status Bar */
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  /* Header */
+  .header {
+    padding: 16px 24px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .day-counter {
+    background: var(--accent-soft);
+    color: var(--accent);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* Pages */
+  .page { display: none; padding: 0 24px 24px; animation: fadeIn 0.3s ease; }
+  .page.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero Stats Card */
+  .hero-card {
+    background: linear-gradient(135deg, #1F2A3A 0%, #2A3447 100%);
+    border-radius: 24px;
+    padding: 28px 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .hero-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+  }
+
+  .hero-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .hero-weight {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -2px;
+  }
+
+  .hero-weight span {
+    font-size: 24px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .hero-progress {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .progress-item {
+    flex: 1;
+  }
+
+  .progress-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .progress-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Daily Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .stat-card.wide { grid-column: 1 / -1; }
+
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    font-family: 'Playfair Display', Georgia, serif;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-suffix {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .stat-bar {
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .stat-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* Section Title */
+  .section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    margin: 24px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::before {
+    content: "";
+    width: 16px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  /* Quick Actions */
+  .quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quick-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .quick-btn:active { transform: scale(0.97); background: var(--bg-elevated); }
+  .quick-btn-icon { font-size: 18px; }
+
+  /* Section title row with edit button */
+  .section-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 24px 0 12px;
+  }
+
+  .edit-toggle {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .edit-toggle.active {
+    background: var(--accent);
+    color: #1A1F2A;
+    border-color: var(--accent);
+  }
+
+  /* Quick add item in edit mode */
+  .quick-btn {
+    position: relative;
+  }
+
+  .quick-btn.edit-mode {
+    padding-right: 36px;
+  }
+
+  .quick-btn-delete {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--danger);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  .quick-btn.edit-mode .quick-btn-delete {
+    display: flex;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .quick-btn-add {
+    background: var(--bg-card);
+    border: 1.5px dashed var(--border);
+    color: var(--text-muted);
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .quick-btn-add:active {
+    transform: scale(0.97);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Add Item Modal */
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s ease;
+    font-family: inherit;
+  }
+
+  .form-input:focus {
+    border-color: var(--accent);
+  }
+
+  .emoji-picker {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .emoji-option {
+    width: 44px;
+    height: 44px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .emoji-option:active {
+    transform: scale(0.92);
+  }
+
+  .emoji-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Template selector (onboarding) */
+  .template-card {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .template-card:active {
+    transform: scale(0.98);
+  }
+
+  .template-card.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .template-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .template-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .template-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .template-chip {
+    background: rgba(255,255,255,0.05);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Primary Buttons */
+  .primary-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #1A1F2A;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-secondary {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .btn-secondary:active { transform: scale(0.98); background: var(--bg-elevated); }
+
+  /* Streak Card */
+  .streak-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .streak-label {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .streak-value {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  /* Meal Cards */
+  .meal-card {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .meal-emoji {
+    width: 44px;
+    height: 44px;
+    background: var(--bg-elevated);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .meal-info { flex: 1; }
+  .meal-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .meal-time { font-size: 11px; color: var(--text-muted); }
+  .meal-kcal { font-size: 13px; font-weight: 700; color: var(--accent); }
+
+  /* Calendar */
+  .calendar-month {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .month-name {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .month-year {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .day-header {
+    font-size: 10px;
+    text-align: center;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 8px 0;
+    font-weight: 600;
+  }
+
+  .day-cell {
+    aspect-ratio: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    font-size: 11px;
+  }
+
+  .day-cell:active { transform: scale(0.95); }
+
+  .day-num {
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .day-icon {
+    font-size: 12px;
+    margin-top: 2px;
+    line-height: 1;
+  }
+
+  .day-empty { background: transparent; border: none; cursor: default; }
+  .day-perfect { background: rgba(111, 207, 151, 0.45); border-color: rgba(111, 207, 151, 0.7); }
+  .day-ok { background: rgba(232, 182, 71, 0.45); border-color: rgba(232, 182, 71, 0.7); }
+  .day-cheat { background: rgba(235, 87, 87, 0.45); border-color: rgba(235, 87, 87, 0.7); }
+  .day-rest { background: rgba(139, 146, 160, 0.08); border-color: rgba(139, 146, 160, 0.2); }
+  .day-noinfo { background: rgba(139, 146, 160, 0.05); border-color: rgba(139, 146, 160, 0.15); border-style: dashed; }
+  .day-today { border-color: var(--accent); border-width: 2px; }
+
+  /* Calendar Legend */
+  .legend {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .legend-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .legend-row:last-child { margin-bottom: 0; }
+
+  .legend-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  /* Bottom Nav */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 414px;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 24px;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn-icon { font-size: 20px; }
+
+  /* Chat */
+  .chat-container { padding-bottom: 100px; }
+
+  .chat-bubble {
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .chat-claude {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-user {
+    background: var(--accent);
+    color: #1A1F2A;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+    font-weight: 500;
+  }
+
+  .chat-input-area {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 414px;
+    padding: 12px 24px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+  }
+
+  .chat-input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 24px;
+    font-size: 14px;
+    outline: none;
+  }
+
+  .voice-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    color: #1A1F2A;
+    font-size: 18px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* Add Meal Modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(8px);
+  }
+
+  .modal.active { display: flex; animation: fadeIn 0.2s ease; }
+
+  .modal-content {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 414px;
+    border-radius: 28px 28px 0 0;
+    padding: 24px;
+    animation: slideUp 0.3s ease;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .modal-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .photo-zone {
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 40px 20px;
+    text-align: center;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .photo-zone:active { background: var(--bg-elevated); border-color: var(--accent); }
+
+  .photo-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.6;
+  }
+
+  .photo-text {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .photo-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .analyzed-result {
+    margin-top: 20px;
+    padding: 16px;
+    background: var(--bg);
+    border-radius: 16px;
+    border: 1px solid var(--accent-soft);
+    display: none;
+  }
+
+  .analyzed-result.show { display: block; animation: fadeIn 0.4s ease; }
+
+  .analyzed-name {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+
+  .analyzed-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .analyzed-item {
+    background: var(--bg-card);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+
+  .analyzed-item strong {
+    display: block;
+    font-size: 18px;
+    color: var(--accent);
+    font-family: 'Playfair Display', serif;
+    margin-top: 2px;
+  }
+
+  /* Profile Page */
+  .profile-section {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-row:last-child { border-bottom: none; }
+
+  .profile-label { font-size: 13px; color: var(--text-muted); }
+  .profile-value { font-size: 14px; font-weight: 600; }
+
+  /* Weekly Recap Card */
+  .recap-card {
+    background: linear-gradient(135deg, #2A1F3A 0%, #1F1A2A 100%);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border);
+  }
+
+  .recap-week {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .recap-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .recap-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .recap-stat {
+    background: rgba(255,255,255,0.04);
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  .recap-stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .recap-stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Playfair Display', serif;
+  }
+
+  .recap-stat-value.green { color: var(--success); }
+  .recap-stat-value.gold { color: var(--accent); }
+
+  .share-btn {
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Prototype Banner */
+  .prototype-banner {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin: 0 24px 16px;
+    font-size: 11px;
+    color: var(--accent);
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  /* Body Comp Update Section */
+  .body-comp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 24px 0 12px;
+  }
+
+  .body-comp-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .icon-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:active {
+    transform: scale(0.92);
+    background: var(--bg-elevated);
+  }
+
+  .icon-btn.primary {
+    background: var(--accent);
+    color: #1A1F2A;
+    border-color: var(--accent);
+    width: auto;
+    padding: 0 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Metric row with trend indicator */
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin: 0 -8px;
+    padding-left: 8px;
+    padding-right: 8px;
+    border-radius: 8px;
+  }
+
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row:active { background: var(--bg-elevated); }
+
+  .metric-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .metric-icon {
+    font-size: 16px;
+    width: 28px;
+    text-align: center;
+  }
+
+  .metric-name {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .metric-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .metric-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .metric-trend {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+
+  .trend-down { background: rgba(111, 207, 151, 0.15); color: var(--success); }
+  .trend-up { background: rgba(235, 87, 87, 0.15); color: var(--danger); }
+  .trend-neutral { background: rgba(139, 146, 160, 0.15); color: var(--text-muted); }
+
+  .last-updated {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  .last-updated.warning {
+    color: var(--warning);
+  }
+
+  /* Update method cards */
+  .method-card {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .method-card:active {
+    transform: scale(0.98);
+    border-color: var(--accent);
+  }
+
+  .method-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--accent-soft);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .method-info { flex: 1; }
+  .method-title { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+  .method-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+  /* Voice Recording UI */
+  .voice-recorder {
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  .voice-circle {
+    width: 100px;
+    height: 100px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    color: #1A1F2A;
+  }
+
+  .voice-circle.recording {
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(232, 182, 71, 0.4); }
+    50% { box-shadow: 0 0 0 20px rgba(232, 182, 71, 0); }
+  }
+
+  .voice-status {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .voice-transcript {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 13px;
+    min-height: 60px;
+    margin-top: 20px;
+    color: var(--text-muted);
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .voice-transcript.has-content {
+    color: var(--text);
+  }
+
+  /* Toggle Switch */
+  .toggle-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toggle-row:last-child { border-bottom: none; }
+
+  .toggle-info { flex: 1; }
+  .toggle-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+  .toggle-desc { font-size: 11px; color: var(--text-muted); }
+
+  .toggle-switch {
+    width: 44px;
+    height: 26px;
+    background: var(--bg-elevated);
+    border-radius: 13px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .toggle-switch.active { background: var(--accent); }
+
+  .toggle-switch::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+
+  .toggle-switch.active::after { transform: translateX(18px); }
+
+  .toggle-switch.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .metric-badge {
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-weight: 600;
+  }
+
+  /* Detail Page (Line Chart) */
+  .detail-header {
+    margin-bottom: 24px;
+  }
+
+  .detail-current {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: -1.5px;
+  }
+
+  .detail-current span {
+    font-size: 22px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .detail-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 12px;
+  }
+
+  .detail-meta-item {
+    color: var(--text-muted);
+  }
+
+  .detail-meta-item strong { color: var(--accent); font-weight: 700; }
+
+  .chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 16px;
+    margin-bottom: 20px;
+  }
+
+  .chart-svg {
+    width: 100%;
+    height: 200px;
+  }
+
+  .chart-line {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .chart-area {
+    fill: url(#chartGradient);
+    opacity: 0.3;
+  }
+
+  .chart-dot {
+    fill: var(--accent);
+    stroke: var(--bg);
+    stroke-width: 2;
+  }
+
+  .chart-label {
+    fill: var(--text-muted);
+    font-size: 10px;
+    font-family: inherit;
+  }
+
+  /* History list */
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .history-item:last-child { border-bottom: none; }
+
+  .history-date {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .history-value {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .history-delta {
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    margin-left: 8px;
+    font-weight: 600;
+  }
+
+  /* Back button */
+  .back-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  /* Workout V4 Styles */
+  .workout-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    background: var(--bg-card);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .workout-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .workout-tab.active {
+    background: var(--accent);
+    color: #1A1F2A;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.4;
+  }
+
+  .empty-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .empty-desc {
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  /* Exercise list */
+  .exercise-item {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .exercise-item:active {
+    transform: scale(0.98);
+    background: var(--bg-elevated);
+  }
+
+  .exercise-item.injury-flag {
+    border-color: rgba(235, 87, 87, 0.3);
+    background: rgba(235, 87, 87, 0.05);
+  }
+
+  .exercise-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .exercise-info { flex: 1; min-width: 0; }
+  .exercise-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .exercise-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .injury-warning {
+    background: var(--danger);
+    color: white;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+
+  /* Exercise actions */
+  .exercise-actions {
+    display: flex;
+    gap: 4px;
+  }
+
+  /* Set logger */
+  .set-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 36px;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .set-num {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .set-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .set-input:focus { border-color: var(--accent); }
+
+  .set-delete {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--danger);
+    border-radius: 8px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .set-headers {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 36px;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .add-set-btn {
+    background: transparent;
+    border: 1.5px dashed var(--border);
+    color: var(--text-muted);
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* PR badge */
+  .pr-badge {
+    background: var(--accent);
+    color: #1A1F2A;
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* Cardio entry */
+  .cardio-photo-zone {
+    border: 2px dashed var(--border);
+    border-radius: 14px;
+    padding: 24px 16px;
+    text-align: center;
+    background: var(--bg);
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+  .cardio-analysis {
+    background: var(--accent-soft);
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 12px;
+    display: none;
+  }
+
+  .cardio-analysis.show { display: block; animation: fadeIn 0.4s ease; }
+
+  .cardio-analysis-title {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cardio-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .cardio-stat {
+    background: var(--bg);
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .cardio-stat strong {
+    display: block;
+    font-size: 16px;
+    color: var(--text);
+    font-family: 'Playfair Display', serif;
+    margin-top: 2px;
+  }
+
+  .ai-summary {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Auto-suggest banner */
+  .suggest-banner {
+    background: rgba(242, 153, 74, 0.1);
+    border: 1px solid rgba(242, 153, 74, 0.3);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .suggest-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .suggest-content { flex: 1; }
+  .suggest-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--warning);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .suggest-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+
+  /* Progression mini-chart */
+  .progress-bar-mini {
+    height: 4px;
+    background: var(--bg-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+
+  .progress-bar-mini-fill {
+    height: 100%;
+    background: var(--success);
+    border-radius: 2px;
+  }
+
+  /* Section title with action */
+  .section-action-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 12px;
+  }
+
+  .section-action-btn {
+    background: var(--accent);
+    color: #1A1F2A;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* Workout */
+  .workout-item {
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .workout-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .workout-info { flex: 1; }
+  .workout-name { font-size: 14px; font-weight: 600; }
+  .workout-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="phone">
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●● 100%</span>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">teman<span>diet</span></div>
+    <div class="day-counter" id="dayCounter">DAY -- / 90</div>
+  </div>
+
+
+
+
+  <!-- HOME PAGE -->
+  <div id="home" class="page active">
+
+    <!-- Hero Weight Card -->
+    <div class="hero-card">
+      <div class="hero-label">Berat Sekarang</div>
+      <div class="hero-weight" id="heroWeight" onclick="openWeightInputModal()" style="cursor: pointer;">--<span> kg</span></div>
+      <div class="hero-progress">
+        <div class="progress-item">
+          <div class="progress-label">Mulai</div>
+          <div class="progress-value" id="heroStartWeight" style="color: var(--text-muted);">--</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">Target</div>
+          <div class="progress-value" id="heroTargetWeight">--</div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">Turun</div>
+          <div class="progress-value" id="heroLostWeight">--</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Kalori Hari Ini</div>
+        <div class="stat-value">1.420<span class="stat-suffix"> / 1.700</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" style="width: 83.5%; background: var(--accent);"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Protein</div>
+        <div class="stat-value">178<span class="stat-suffix">g / 175</span></div>
+        <div class="stat-bar"><div class="stat-bar-fill" style="width: 100%; background: var(--success);"></div></div>
+      </div>
+      <div class="stat-card wide">
+        <div class="stat-label">Net Defisit Hari Ini</div>
+        <div class="stat-value" style="color: var(--success);">-987<span class="stat-suffix"> kcal · sweet spot</span></div>
+      </div>
+    </div>
+
+    <!-- Streak -->
+    <div class="streak-card">
+      <div>
+        <div class="streak-label">Streak konsisten</div>
+        <div class="streak-value">🔥 6 hari</div>
+      </div>
+      <div style="text-align: right;">
+        <div class="streak-label">Tanpa cheat</div>
+        <div class="streak-value">💪 3 hari</div>
+      </div>
+    </div>
+
+    <!-- Primary Actions -->
+    <div class="primary-buttons">
+      <button class="btn-primary" onclick="openModal()">➕ Tambah Makanan</button>
+      <button class="btn-secondary" onclick="showPage('chat')">💬 Tanya Claude</button>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title-row">
+      <div class="section-title" style="margin: 0;">Quick Add</div>
+      <button class="edit-toggle" id="editToggle" onclick="toggleEditMode()">Edit</button>
+    </div>
+    <div class="quick-actions" id="quickActions">
+      <!-- Items will be generated by JS -->
+    </div>
+
+    <!-- Today's Meals -->
+    <div class="section-title">Makan Hari Ini</div>
+    <div id="todayMealsList"></div>
+
+    <!-- Today's Workout -->
+    <div class="section-title">Workout Hari Ini</div>
+    <div id="homeWorkoutSummary"></div>
+  </div>
+
+  <!-- CALENDAR PAGE -->
+  <div id="calendar" class="page">
+    <div class="calendar-month">
+      <div class="month-name" id="calMonthName">Juli</div>
+      <div class="month-year" id="calMonthYear">2026</div>
+    </div>
+
+    <div class="calendar-grid" id="calendarGrid">
+      <div class="day-header">Min</div>
+      <div class="day-header">Sen</div>
+      <div class="day-header">Sel</div>
+      <div class="day-header">Rab</div>
+      <div class="day-header">Kam</div>
+      <div class="day-header">Jum</div>
+      <div class="day-header">Sab</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-title">Legend (berdasarkan total kalori)</div>
+      <div class="legend-row"><div class="legend-dot" style="background: rgba(111, 207, 151, 0.6);"></div><span>Hijau — zona defisit sehat</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background: rgba(232, 182, 71, 0.6);"></div><span>Kuning — undereat (di bawah 1.200 kcal)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background: rgba(235, 87, 87, 0.6);"></div><span>Merah — over target kalori</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background: rgba(139, 146, 160, 0.15); border: 1px dashed rgba(139,146,160,0.4);"></div><span>Abu-abu — belum ada data</span></div>
+    </div>
+  </div>
+
+  <!-- CHAT PAGE -->
+  <div id="chat" class="page">
+    <div style="text-align: center; padding: 40px 20px;">
+      <div style="font-size: 56px; margin-bottom: 16px;">💬</div>
+      <div style="font-family: 'Playfair Display', Georgia, serif; font-size: 24px; font-weight: 700; margin-bottom: 8px;">Tanya Claude</div>
+      <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 28px; padding: 0 12px;">
+        Chat AI belum aktif di app ini. Buka Claude app buat tanya kalori, adjust plan, atau update harian.
+      </div>
+
+      <a href="https://claude.ai" target="_blank" class="btn-primary" style="display: inline-flex; text-decoration: none; padding: 16px 32px;">
+        Buka Claude
+      </a>
+
+      <div style="margin-top: 32px; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; text-align: left;">
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px; font-weight: 600;">Template pesan awal</div>
+        <div id="chatTemplate" style="font-size: 13px; color: var(--text); line-height: 1.6; font-family: monospace;">
+          Halo Claude, update Day X<br>
+          BB pagi: -- kg<br>
+          Sarapan: --<br>
+          Workout: --<br>
+          Bahu: --/10
+        </div>
+        <button onclick="copyChatTemplate()" style="margin-top: 12px; background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); padding: 8px 14px; border-radius: 8px; font-size: 12px; cursor: pointer;">Copy template</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKOUT LIBRARY PAGE -->
+  <div id="workout" class="page">
+    <!-- Tabs -->
+    <div class="workout-tabs">
+      <button class="workout-tab active" data-wtab="today" onclick="switchWorkoutTab('today')">Hari Ini</button>
+      <button class="workout-tab" data-wtab="library" onclick="switchWorkoutTab('library')">Library</button>
+      <button class="workout-tab" data-wtab="history" onclick="switchWorkoutTab('history')">History</button>
+    </div>
+
+    <!-- TAB: TODAY -->
+    <div class="workout-tab-content" id="wtab-today">
+      <!-- Injury auto-suggest banner -->
+      <div id="injuryBanner"></div>
+
+      <div class="section-action-row">
+        <div class="section-title" style="margin: 0;">Workout Hari Ini</div>
+        <button class="section-action-btn" onclick="openAddExerciseToToday()">+ Tambah</button>
+      </div>
+
+      <div id="todayExercises"></div>
+
+      <div class="section-action-row" style="margin-top: 28px;">
+        <div class="section-title" style="margin: 0;">Cardio Hari Ini</div>
+        <button class="section-action-btn" onclick="openAddCardio()">+ Tambah</button>
+      </div>
+
+      <div id="todayCardio"></div>
+    </div>
+
+    <!-- TAB: LIBRARY -->
+    <div class="workout-tab-content" id="wtab-library" style="display: none;">
+      <div class="section-action-row">
+        <div class="section-title" style="margin: 0;">Exercise Library</div>
+        <button class="section-action-btn" onclick="openAddExerciseToLibrary()">+ Add</button>
+      </div>
+
+      <div id="libraryList"></div>
+    </div>
+
+    <!-- TAB: HISTORY -->
+    <div class="workout-tab-content" id="wtab-history" style="display: none;">
+      <div class="section-title">Workout History</div>
+      <div id="workoutHistory"></div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="profile" class="page">
+
+    <!-- Weekly Recap (Shareable) -->
+    <div class="recap-card">
+      <div class="recap-week">Week 3 Recap</div>
+      <div class="recap-title">Sung's Cutting Journey</div>
+      <div class="recap-stats">
+        <div class="recap-stat">
+          <div class="recap-stat-label">BB sekarang</div>
+          <div class="recap-stat-value gold">86.8 kg</div>
+        </div>
+        <div class="recap-stat">
+          <div class="recap-stat-label">Turun minggu ini</div>
+          <div class="recap-stat-value green">-0.3 kg</div>
+        </div>
+        <div class="recap-stat">
+          <div class="recap-stat-label">Workout</div>
+          <div class="recap-stat-value">5×</div>
+        </div>
+        <div class="recap-stat">
+          <div class="recap-stat-label">Avg defisit</div>
+          <div class="recap-stat-value">-987</div>
+        </div>
+      </div>
+      <button class="share-btn">📲 Share to Story</button>
+    </div>
+
+    <!-- Profile Info -->
+    <div class="section-title">Profil Lo</div>
+    <div class="profile-section">
+      <div class="profile-row">
+        <span class="profile-label">Nama</span>
+        <span class="profile-value">Sung</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Umur</span>
+        <span class="profile-value">23</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Tinggi</span>
+        <span class="profile-value">168 cm</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">BB awal</span>
+        <span class="profile-value">89.6 kg</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">BB target</span>
+        <span class="profile-value">77.0 kg</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Deadline</span>
+        <span class="profile-value">1 September 2026</span>
+      </div>
+    </div>
+
+    <div class="body-comp-header">
+      <div class="section-title" style="margin: 0;">Body Composition</div>
+      <div class="body-comp-actions">
+        <button class="icon-btn" onclick="openCustomizeMetricsModal()" title="Customize">⚙️</button>
+        <button class="icon-btn primary" onclick="openUpdateBodyCompModal()">Update</button>
+      </div>
+    </div>
+    <div class="profile-section" id="bodyCompList">
+      <!-- Generated by JS -->
+    </div>
+
+    <div class="section-title">Goal Template</div>
+    <div class="profile-section">
+      <div class="profile-row">
+        <span class="profile-label">Template aktif</span>
+        <span class="profile-value" id="activeTemplate">Cutting 📉</span>
+      </div>
+      <button class="btn-secondary" onclick="openTemplateModal()" style="width: 100%; margin-top: 12px;">Ganti Template</button>
+    </div>
+
+    <div class="section-action-row">
+      <div class="section-title" style="margin: 0;">Daily Target</div>
+      <button class="section-action-btn" onclick="openTargetEditModal()">Edit</button>
+    </div>
+    <div class="profile-section">
+      <div class="profile-row">
+        <span class="profile-label">Kalori</span>
+        <span class="profile-value" id="targetKcalDisplay">1.700 kcal</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Protein</span>
+        <span class="profile-value" id="targetProteinDisplay">175 g</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Karbo</span>
+        <span class="profile-value" id="targetCarbsDisplay">95-120 g</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Lemak</span>
+        <span class="profile-value" id="targetFatDisplay">40-50 g</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Defisit target</span>
+        <span class="profile-value" id="targetDeficitDisplay">750-1.000 kcal</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="showPage('home')" data-page="home">
+      <span class="nav-btn-icon">🏠</span>
+      <span>Home</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('calendar')" data-page="calendar">
+      <span class="nav-btn-icon">📅</span>
+      <span>Kalender</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('chat')" data-page="chat">
+      <span class="nav-btn-icon">💬</span>
+      <span>Chat</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('workout')" data-page="workout">
+      <span class="nav-btn-icon">💪</span>
+      <span>Workout</span>
+    </button>
+    <button class="nav-btn" onclick="showPage('profile')" data-page="profile">
+      <span class="nav-btn-icon">👤</span>
+      <span>Profile</span>
+    </button>
+  </div>
+
+  <!-- Add Meal Modal -->
+  <div class="modal" id="mealModal" onclick="closeModalOnBackdrop(event, 'mealModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Tambah Makanan</div>
+      <div class="modal-subtitle">Input manual — foto AI belum aktif</div>
+
+      <div class="form-group">
+        <label class="form-label">Nama Makanan</label>
+        <input class="form-input" id="mealNameInput" type="text" placeholder="cth: Color bowl + 180g ayam">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kalori (kcal)</label>
+        <input class="form-input" id="mealKcalInput" type="number" placeholder="635">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Protein (g)</label>
+          <input class="form-input" id="mealProteinInput" type="number" placeholder="66">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Karbo (g)</label>
+          <input class="form-input" id="mealCarbsInput" type="number" placeholder="52">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Lemak (g)</label>
+        <input class="form-input" id="mealFatInput" type="number" placeholder="18">
+      </div>
+
+      <button class="btn-primary" onclick="submitManualMeal()" style="width: 100%;">Simpan Makanan</button>
+    </div>
+  </div>
+  <!-- ADD EXERCISE TO LIBRARY MODAL -->
+  <div class="modal" id="addToLibraryModal" onclick="closeModalOnBackdrop(event, 'addToLibraryModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Tambah Exercise</div>
+      <div class="modal-subtitle">Bikin custom exercise buat library lo</div>
+
+      <div class="form-group">
+        <label class="form-label">Pilih Icon</label>
+        <div class="emoji-picker" id="exerciseEmojiPicker">
+          <div class="emoji-option" data-emoji="🏋️">🏋️</div>
+          <div class="emoji-option" data-emoji="💪">💪</div>
+          <div class="emoji-option" data-emoji="🦵">🦵</div>
+          <div class="emoji-option" data-emoji="🔙">🔙</div>
+          <div class="emoji-option" data-emoji="🏃">🏃</div>
+          <div class="emoji-option" data-emoji="🧘">🧘</div>
+          <div class="emoji-option" data-emoji="⚡">⚡</div>
+          <div class="emoji-option" data-emoji="🥊">🥊</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nama Exercise</label>
+        <input class="form-input" id="exerciseName" type="text" placeholder="cth: Squat, Bench press">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Body Part</label>
+        <select class="form-input" id="exerciseBodyPart">
+          <option value="leg">🦵 Leg</option>
+          <option value="chest">💪 Chest</option>
+          <option value="back">🔙 Back</option>
+          <option value="shoulder">🏋️ Shoulder</option>
+          <option value="arm">💪 Arm</option>
+          <option value="core">⚡ Core</option>
+          <option value="other">📦 Other</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="saveLibraryExercise()" style="width: 100%;">Simpan</button>
+    </div>
+  </div>
+
+  <!-- ADD EXERCISE TO TODAY MODAL -->
+  <div class="modal" id="addToTodayModal" onclick="closeModalOnBackdrop(event, 'addToTodayModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Pilih Exercise</div>
+      <div class="modal-subtitle">Pilih dari library lo</div>
+      <div id="exercisePickerList" style="max-height: 50vh; overflow-y: auto; margin-bottom: 16px;"></div>
+      <button class="btn-secondary" onclick="openAddExerciseToLibrary(true)" style="width: 100%;">+ Buat Exercise Baru</button>
+    </div>
+  </div>
+
+  <!-- LOG EXERCISE SETS MODAL -->
+  <div class="modal" id="logSetsModal" onclick="closeModalOnBackdrop(event, 'logSetsModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="logSetsTitle">Log Sets</div>
+      <div class="modal-subtitle" id="logSetsSubtitle">Track sets × reps × weight</div>
+
+      <div id="prevPerformance" style="background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 16px; font-size: 12px; color: var(--text-muted); display: none;"></div>
+
+      <div class="set-headers">
+        <div>SET</div>
+        <div>WEIGHT (kg)</div>
+        <div>REPS</div>
+        <div></div>
+      </div>
+
+      <div id="setsContainer"></div>
+
+      <button class="add-set-btn" onclick="addSetRow()">+ Tambah Set</button>
+
+      <button class="btn-primary" onclick="saveExerciseSets()" style="width: 100%; margin-top: 16px;">Simpan Log</button>
+    </div>
+  </div>
+
+  <!-- ADD CARDIO MODAL -->
+  <div class="modal" id="addCardioModal" onclick="closeModalOnBackdrop(event, 'addCardioModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Log Cardio</div>
+      <div class="modal-subtitle">Upload foto stats atau isi manual</div>
+
+      <div class="cardio-photo-zone" onclick="simulateCardioAnalyze()">
+        <div class="photo-icon">📸</div>
+        <div class="photo-text">Foto stats cardio</div>
+        <div class="photo-hint">Treadmill display / Strava / smartwatch</div>
+      </div>
+
+      <div class="cardio-analysis" id="cardioAnalysis">
+        <div class="cardio-analysis-title">✓ AI Analyzed</div>
+        <div class="cardio-stats">
+          <div class="cardio-stat">Type<strong>Treadmill incline</strong></div>
+          <div class="cardio-stat">Duration<strong>30 min</strong></div>
+          <div class="cardio-stat">Distance<strong>2.5 km</strong></div>
+          <div class="cardio-stat">Incline<strong>15%</strong></div>
+          <div class="cardio-stat">Avg pace<strong>12:00/km</strong></div>
+          <div class="cardio-stat">Calories<strong>~420 kcal</strong></div>
+        </div>
+        <div class="ai-summary">
+          💡 <b>AI Summary:</b> Cardio incline tinggi efektif buat fat burn tanpa stress lutut. Defisit hari ini bagus, kombinasi sama leg day = quality session. Hidrasi extra setelah ini.
+        </div>
+      </div>
+
+      <button class="btn-secondary" onclick="openManualCardio()" style="width: 100%; margin-top: 12px;">✍️ Input Manual</button>
+
+      <button class="btn-primary" onclick="saveCardio()" style="width: 100%; margin-top: 12px;">Simpan Cardio</button>
+    </div>
+  </div>
+
+  <!-- MANUAL CARDIO MODAL -->
+  <div class="modal" id="manualCardioModal" onclick="closeModalOnBackdrop(event, 'manualCardioModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Manual Cardio Input</div>
+      <div class="modal-subtitle">Ketik detail cardio lo</div>
+
+      <div class="form-group">
+        <label class="form-label">Jenis Cardio</label>
+        <select class="form-input" id="cardioType">
+          <option>Jogging outdoor</option>
+          <option>Treadmill incline</option>
+          <option>Treadmill flat</option>
+          <option>Sepeda</option>
+          <option>Renang</option>
+          <option>Lainnya</option>
+        </select>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Durasi (menit)</label>
+          <input class="form-input" id="cardioDuration" type="number" placeholder="30">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Distance (km)</label>
+          <input class="form-input" id="cardioDistance" type="number" step="0.1" placeholder="3.0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Calories burn (estimate)</label>
+        <input class="form-input" id="cardioCalories" type="number" placeholder="250">
+      </div>
+
+      <button class="btn-primary" onclick="saveManualCardio()" style="width: 100%;">Simpan</button>
+    </div>
+  </div>
+  <div id="metricDetail" class="page">
+    <button class="back-btn" onclick="showPage('profile')">← Kembali</button>
+
+    <div class="detail-header">
+      <div class="hero-label" id="detailLabel">Body Fat</div>
+      <div class="detail-current">
+        <span id="detailCurrent">30.4</span><span id="detailUnit"> %</span>
+      </div>
+      <div class="detail-meta">
+        <div class="detail-meta-item">Goal: <strong id="detailGoal">22%</strong></div>
+        <div class="detail-meta-item">Turun: <strong id="detailDelta">-2.6%</strong></div>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <svg class="chart-svg" id="chartSvg" viewBox="0 0 320 200" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#E8B647;stop-opacity:0.4" />
+            <stop offset="100%" style="stop-color:#E8B647;stop-opacity:0" />
+          </linearGradient>
+        </defs>
+        <!-- Chart will be drawn by JS -->
+      </svg>
+    </div>
+
+    <div class="section-title">History</div>
+    <div class="profile-section" id="historyList">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+
+  <!-- UPDATE BODY COMP MODAL -->
+  <div class="modal" id="updateBodyCompModal" onclick="closeModalOnBackdrop(event, 'updateBodyCompModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Update Body Composition</div>
+      <div class="modal-subtitle">Pilih cara input data yang lo prefer</div>
+
+      <div class="method-card" onclick="openPhotoMethod()">
+        <div class="method-icon">📸</div>
+        <div class="method-info">
+          <div class="method-title">Foto InBody Scan</div>
+          <div class="method-desc">AI auto-extract semua angka dari hasil scan</div>
+        </div>
+      </div>
+
+      <div class="method-card" onclick="openManualMethod()">
+        <div class="method-icon">✍️</div>
+        <div class="method-info">
+          <div class="method-title">Manual Input</div>
+          <div class="method-desc">Ketik angka satu-satu</div>
+        </div>
+      </div>
+
+      <div class="method-card" onclick="openVoiceMethod()">
+        <div class="method-icon">🎤</div>
+        <div class="method-info">
+          <div class="method-title">Voice Input</div>
+          <div class="method-desc">Ngomong aja, AI parse otomatis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANUAL INPUT MODAL -->
+  <div class="modal" id="manualInputModal" onclick="closeModalOnBackdrop(event, 'manualInputModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Manual Input</div>
+      <div class="modal-subtitle">Update angka body composition lo</div>
+
+      <div id="manualInputFields">
+        <!-- Generated by JS based on enabled metrics -->
+      </div>
+
+      <button class="btn-primary" onclick="saveManualUpdate()" style="width: 100%; margin-top: 8px;">Simpan Update</button>
+    </div>
+  </div>
+
+  <!-- VOICE INPUT MODAL -->
+  <div class="modal" id="voiceInputModal" onclick="closeModalOnBackdrop(event, 'voiceInputModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Voice Input</div>
+      <div class="modal-subtitle">Tap mic, ngomong angka lo</div>
+
+      <div class="voice-recorder">
+        <div class="voice-circle" id="voiceCircle" onclick="toggleRecording()">🎤</div>
+        <div class="voice-status" id="voiceStatus">Tap untuk mulai</div>
+      </div>
+
+      <div class="voice-transcript" id="voiceTranscript">
+        Contoh: "BMR aku 1700, body fat 28 persen, muscle mass 36 kilo, lean 63"
+      </div>
+
+      <button class="btn-primary" onclick="processVoiceInput()" id="voiceSaveBtn" style="width: 100%; margin-top: 20px; display: none;">Parse & Simpan</button>
+    </div>
+  </div>
+
+  <!-- PHOTO INPUT MODAL -->
+  <div class="modal" id="photoInputModal" onclick="closeModalOnBackdrop(event, 'photoInputModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Foto InBody Scan</div>
+      <div class="modal-subtitle">Upload foto hasil scan, AI extract semua data</div>
+
+      <div class="photo-zone" onclick="simulatePhotoExtract()">
+        <div class="photo-icon">📸</div>
+        <div class="photo-text">Tap untuk foto</div>
+        <div class="photo-hint">Atau pilih dari galeri</div>
+      </div>
+
+      <div class="analyzed-result" id="photoExtractResult">
+        <div class="analyzed-name">✓ InBody scan detected</div>
+        <div style="margin-bottom: 16px; font-size: 12px; color: var(--text-muted); line-height: 1.6;">
+          AI extracted dari foto:
+        </div>
+        <div class="analyzed-grid" id="extractedGrid">
+          <!-- Generated -->
+        </div>
+        <button class="btn-primary" onclick="savePhotoExtract()" style="width: 100%;">Simpan Update</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOMIZE METRICS MODAL -->
+  <div class="modal" id="customizeMetricsModal" onclick="closeModalOnBackdrop(event, 'customizeMetricsModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Customize Metrics</div>
+      <div class="modal-subtitle">Pilih metric yang mau lo track. 5 default wajib aktif.</div>
+
+      <div id="metricsTogglesList">
+        <!-- Generated by JS -->
+      </div>
+
+      <button class="btn-secondary" onclick="openAddCustomMetric()" style="width: 100%; margin-top: 16px;">+ Tambah Custom Metric</button>
+    </div>
+  </div>
+
+  <!-- ADD CUSTOM METRIC MODAL -->
+  <div class="modal" id="addCustomMetricModal" onclick="closeModalOnBackdrop(event, 'addCustomMetricModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Tambah Custom Metric</div>
+      <div class="modal-subtitle">Track metric apa aja yang lo mau (cth: lingkar perut, lingkar paha)</div>
+
+      <div class="form-group">
+        <label class="form-label">Icon</label>
+        <div class="emoji-picker" id="metricEmojiPicker">
+          <div class="emoji-option" data-emoji="📏">📏</div>
+          <div class="emoji-option" data-emoji="📐">📐</div>
+          <div class="emoji-option" data-emoji="⚖️">⚖️</div>
+          <div class="emoji-option" data-emoji="💧">💧</div>
+          <div class="emoji-option" data-emoji="🦴">🦴</div>
+          <div class="emoji-option" data-emoji="💪">💪</div>
+          <div class="emoji-option" data-emoji="🩸">🩸</div>
+          <div class="emoji-option" data-emoji="📊">📊</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nama Metric</label>
+        <input class="form-input" id="customMetricName" type="text" placeholder="cth: Lingkar perut">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Unit</label>
+          <input class="form-input" id="customMetricUnit" type="text" placeholder="cm">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nilai Awal</label>
+          <input class="form-input" id="customMetricValue" type="number" placeholder="95">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveCustomMetric()" style="width: 100%;">Tambah Metric</button>
+    </div>
+  </div>
+  <!-- WEIGHT INPUT MODAL -->
+  <!-- TARGET EDIT MODAL -->
+  <div class="modal" id="targetEditModal" onclick="closeModalOnBackdrop(event, 'targetEditModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Edit Daily Target</div>
+      <div class="modal-subtitle">Ubah manual atau sesuai saran AI</div>
+
+      <div class="form-group">
+        <label class="form-label">Kalori (kcal)</label>
+        <input class="form-input" id="editKcal" type="number" placeholder="1700">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Protein (g)</label>
+        <input class="form-input" id="editProtein" type="number" placeholder="175">
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Karbo min (g)</label>
+          <input class="form-input" id="editCarbsMin" type="number" placeholder="95">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Karbo max (g)</label>
+          <input class="form-input" id="editCarbsMax" type="number" placeholder="120">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Lemak min (g)</label>
+          <input class="form-input" id="editFatMin" type="number" placeholder="40">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lemak max (g)</label>
+          <input class="form-input" id="editFatMax" type="number" placeholder="50">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Defisit min</label>
+          <input class="form-input" id="editDeficitMin" type="number" placeholder="750">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Defisit max</label>
+          <input class="form-input" id="editDeficitMax" type="number" placeholder="1000">
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="saveTargets()" style="width: 100%;">Simpan Target</button>
+    </div>
+  </div>
+
+  <div class="modal" id="weightInputModal" onclick="closeModalOnBackdrop(event, 'weightInputModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Update Berat Badan</div>
+      <div class="modal-subtitle">Nimbang pagi, kosong perut, sebelum minum</div>
+
+      <div class="form-group">
+        <label class="form-label">Berat (kg)</label>
+        <input class="form-input" id="weightInput" type="number" step="0.1" placeholder="85.5" style="font-size: 24px; text-align: center; padding: 20px;">
+      </div>
+
+      <button class="btn-primary" onclick="submitWeight()" style="width: 100%;">Simpan</button>
+    </div>
+  </div>
+
+  <div class="modal" id="customItemModal" onclick="closeModalOnBackdrop(event, 'customItemModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title" id="customModalTitle">Tambah Quick Add</div>
+      <div class="modal-subtitle">Bikin shortcut buat makanan yang sering lo log</div>
+
+      <div class="form-group">
+        <label class="form-label">Pilih Emoji</label>
+        <div class="emoji-picker" id="emojiPicker">
+          <div class="emoji-option" data-emoji="🍗">🍗</div>
+          <div class="emoji-option" data-emoji="🥩">🥩</div>
+          <div class="emoji-option" data-emoji="🐟">🐟</div>
+          <div class="emoji-option" data-emoji="🍳">🍳</div>
+          <div class="emoji-option" data-emoji="🥛">🥛</div>
+          <div class="emoji-option" data-emoji="🥜">🥜</div>
+          <div class="emoji-option" data-emoji="🍠">🍠</div>
+          <div class="emoji-option" data-emoji="🥑">🥑</div>
+          <div class="emoji-option" data-emoji="🍎">🍎</div>
+          <div class="emoji-option" data-emoji="🍌">🍌</div>
+          <div class="emoji-option" data-emoji="🍚">🍚</div>
+          <div class="emoji-option" data-emoji="🥬">🥬</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Nama Makanan</label>
+        <input class="form-input" id="inputName" type="text" placeholder="cth: 200g salmon">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Kalori (kcal)</label>
+        <input class="form-input" id="inputKcal" type="number" placeholder="cth: 410">
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Protein (g)</label>
+          <input class="form-input" id="inputProtein" type="number" placeholder="78">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Karbo (g)</label>
+          <input class="form-input" id="inputCarbs" type="number" placeholder="0">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Lemak (g)</label>
+        <input class="form-input" id="inputFat" type="number" placeholder="3">
+      </div>
+
+      <button class="btn-primary" onclick="saveCustomItem()" style="width: 100%;">Simpan Quick Add</button>
+    </div>
+  </div>
+
+  <!-- Template Selector Modal -->
+  <div class="modal" id="templateModal" onclick="closeModalOnBackdrop(event, 'templateModal')">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <div class="modal-handle"></div>
+      <div class="modal-title">Pilih Template</div>
+      <div class="modal-subtitle">Quick Add bakal di-preset based on goal lo. Bisa di-customize kapan aja.</div>
+
+      <div class="template-card" data-template="cutting" onclick="selectTemplate('cutting')">
+        <div class="template-name">Cutting 📉</div>
+        <div class="template-desc">High protein, low carb, calorie deficit</div>
+        <div class="template-items">
+          <span class="template-chip">🥛 Protein shake</span>
+          <span class="template-chip">🍗 250g ayam</span>
+          <span class="template-chip">🥜 15 almond</span>
+          <span class="template-chip">🍠 100g ubi</span>
+          <span class="template-chip">🍳 3 telur rebus</span>
+          <span class="template-chip">🥬 Sayur bebas</span>
+          <span class="template-chip">🍎 1 apel</span>
+          <span class="template-chip">🐟 100g salmon</span>
+        </div>
+      </div>
+
+      <div class="template-card" data-template="bulking" onclick="selectTemplate('bulking')">
+        <div class="template-name">Bulking 📈</div>
+        <div class="template-desc">High protein, high carb, calorie surplus</div>
+        <div class="template-items">
+          <span class="template-chip">🥛 Mass gainer</span>
+          <span class="template-chip">🍗 300g ayam</span>
+          <span class="template-chip">🍚 200g nasi</span>
+          <span class="template-chip">🥩 200g daging</span>
+          <span class="template-chip">🍌 2 pisang</span>
+          <span class="template-chip">🥜 30 almond</span>
+          <span class="template-chip">🍠 200g ubi</span>
+          <span class="template-chip">🥑 1 alpukat</span>
+        </div>
+      </div>
+
+      <div class="template-card" data-template="maintain" onclick="selectTemplate('maintain')">
+        <div class="template-name">Maintain ⚖️</div>
+        <div class="template-desc">Balanced macro, kalori sesuai TDEE</div>
+        <div class="template-items">
+          <span class="template-chip">🥛 Protein shake</span>
+          <span class="template-chip">🍗 200g ayam</span>
+          <span class="template-chip">🍚 150g nasi</span>
+          <span class="template-chip">🍳 2 telur</span>
+          <span class="template-chip">🥜 20 almond</span>
+          <span class="template-chip">🍠 150g ubi</span>
+          <span class="template-chip">🍎 1 buah</span>
+          <span class="template-chip">🥬 Sayur</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="applyTemplate()" style="width: 100%; margin-top: 8px;">Pakai Template</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ============ SUPABASE CONNECTION ============
+  const SUPABASE_URL = 'https://tyouddnulmppmybklbif.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_s5Rfj0mnSElPj_D9hUyPsA_MxyQ70Kf';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  function todayISO() {
+    return new Date().toISOString().split('T')[0];
+  }
+
+  // ---- SAVE: Daily weight ----
+  async function saveWeightToDb(weightKg) {
+    const { data, error } = await sb
+      .from('daily_logs')
+      .upsert({ date: todayISO(), weight_kg: weightKg }, { onConflict: 'date' })
+      .select();
+    if (error) {
+      console.error('Save weight error:', JSON.stringify(error));
+      alert('Gagal simpan BB: ' + error.message);
+      return null;
+    }
+    console.log('Weight saved:', data);
+    return data;
+  }
+
+  // ---- SAVE: Meal ----
+  async function saveMealToDb(meal) {
+    const { data, error } = await sb
+      .from('meals')
+      .insert({
+        date: todayISO(),
+        time: new Date().toTimeString().split(' ')[0],
+        name: meal.name,
+        emoji: meal.emoji || '🍽️',
+        calories: meal.kcal || meal.calories,
+        protein: meal.p || meal.protein,
+        carbs: meal.c || meal.carbs,
+        fat: meal.f || meal.fat,
+        source: meal.source || 'manual'
+      })
+      .select();
+    if (error) {
+      console.error('Save meal error:', JSON.stringify(error));
+      alert('Gagal simpan meal: ' + error.message);
+      return null;
+    }
+    console.log('Meal saved:', data);
+    return data;
+  }
+
+  // ---- LOAD: Today's meals ----
+  async function loadTodayMeals() {
+    const { data, error } = await sb
+      .from('meals')
+      .select('*')
+      .eq('date', todayISO())
+      .order('time', { ascending: true });
+    if (error) {
+      console.error('Load meals error:', JSON.stringify(error));
+      return [];
+    }
+    return data;
+  }
+
+  // ---- SAVE: Workout session + exercise + sets ----
+  async function saveWorkoutSession(exercises) {
+    const { data: session, error: sessionErr } = await sb
+      .from('workout_sessions')
+      .insert({ date: todayISO() })
+      .select()
+      .single();
+    if (sessionErr) {
+      console.error('Save session error:', sessionErr);
+      alert('Gagal simpan workout: ' + sessionErr.message);
+      return null;
+    }
+
+    for (let i = 0; i < exercises.length; i++) {
+      const ex = exercises[i];
+      const { data: logRow, error: logErr } = await sb
+        .from('exercise_logs')
+        .insert({
+          session_id: session.id,
+          exercise_name: ex.name,
+          order_index: i
+        })
+        .select()
+        .single();
+      if (logErr) { console.error('Save exercise log error:', logErr); continue; }
+
+      if (ex.sets && ex.sets.length > 0) {
+        const setsPayload = ex.sets.map((s, idx) => ({
+          exercise_log_id: logRow.id,
+          set_number: idx + 1,
+          weight_kg: parseFloat(s.weight) || 0,
+          reps: parseInt(s.reps) || 0
+        }));
+        const { error: setsErr } = await sb.from('sets').insert(setsPayload);
+        if (setsErr) console.error('Save sets error:', setsErr);
+      }
+    }
+    return session;
+  }
+
+  // Track today's DB session id so we don't create duplicate sessions
+  let todaySessionId = null;
+
+  async function getOrCreateTodaySession() {
+    if (todaySessionId) return todaySessionId;
+
+    const { data: existing, error: findErr } = await sb
+      .from('workout_sessions')
+      .select('id')
+      .eq('date', todayISO())
+      .limit(1);
+
+    if (findErr) {
+      console.error('Find session error:', findErr);
+      return null;
+    }
+
+    if (existing && existing.length > 0) {
+      todaySessionId = existing[0].id;
+      return todaySessionId;
+    }
+
+    const { data: created, error: createErr } = await sb
+      .from('workout_sessions')
+      .insert({ date: todayISO() })
+      .select()
+      .single();
+
+    if (createErr) {
+      console.error('Create session error:', createErr);
+      return null;
+    }
+
+    todaySessionId = created.id;
+    return todaySessionId;
+  }
+
+  // ---- SAVE: single exercise + its sets into today's session ----
+  async function saveExerciseToSession(exercise) {
+    const sessionId = await getOrCreateTodaySession();
+    if (!sessionId) {
+      alert('Gagal buat/ambil session hari ini');
+      return null;
+    }
+
+    const { data: logRow, error: logErr } = await sb
+      .from('exercise_logs')
+      .insert({
+        session_id: sessionId,
+        exercise_name: exercise.name,
+        order_index: todayExercises.indexOf(exercise)
+      })
+      .select()
+      .single();
+
+    if (logErr) {
+      console.error('Save exercise log error:', logErr);
+      alert('Gagal simpan exercise: ' + logErr.message);
+      return null;
+    }
+
+    if (exercise.sets && exercise.sets.length > 0) {
+      const setsPayload = exercise.sets.map((s, idx) => ({
+        exercise_log_id: logRow.id,
+        set_number: idx + 1,
+        weight_kg: parseFloat(s.weight) || 0,
+        reps: parseInt(s.reps) || 0
+      }));
+      const { error: setsErr } = await sb.from('sets').insert(setsPayload);
+      if (setsErr) {
+        console.error('Save sets error:', setsErr);
+        alert('Gagal simpan sets: ' + setsErr.message);
+        return null;
+      }
+    }
+
+    return logRow;
+  }
+
+  // ---- LOAD: Weight history (for calendar / trend) ----
+  async function loadWeightHistory(limitDays = 30) {
+    const { data, error } = await sb
+      .from('daily_logs')
+      .select('date, weight_kg')
+      .order('date', { ascending: false })
+      .limit(limitDays);
+    if (error) {
+      console.error('Load weight history error:', JSON.stringify(error));
+      return [];
+    }
+    return data;
+  }
+
+  // Generate calendar
+  // ============ CALENDAR (DB-driven, calorie-based color) ============
+  const grid = document.getElementById('calendarGrid');
+  const KUNING_UNDEREAT = 1200; // di bawah ini = kuning (undereat bahaya)
+
+  // Which month calendar shows (default: current)
+  let calYear = new Date().getFullYear();
+  let calMonth = new Date().getMonth(); // 0-indexed
+
+  const monthNamesID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  // Determine color class from total calories vs target
+  function calorieColorClass(totalKcal) {
+    const target = targetData.target_kcal || 1700;
+    if (totalKcal > target) return 'day-cheat';       // merah: over target
+    if (totalKcal < KUNING_UNDEREAT) return 'day-ok';  // kuning: undereat bahaya
+    return 'day-perfect';                              // hijau: zona defisit sehat
+  }
+
+  async function renderCalendar() {
+    if (!grid) return;
+
+    // Update header
+    document.getElementById('calMonthName').textContent = monthNamesID[calMonth];
+    document.getElementById('calMonthYear').textContent = calYear;
+
+    // Clear previous day cells (keep 7 day-header cells)
+    const headers = grid.querySelectorAll('.day-header');
+    grid.innerHTML = '';
+    headers.forEach(h => grid.appendChild(h));
+
+    // Fetch all meals for this month, group by date
+    const monthStart = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01`;
+    const lastDay = new Date(calYear, calMonth+1, 0).getDate();
+    const monthEnd = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
+
+    const kcalByDate = {};
+    const { data: meals, error } = await sb
+      .from('meals')
+      .select('date, calories')
+      .gte('date', monthStart)
+      .lte('date', monthEnd);
+
+    if (error) {
+      console.error('Calendar load error:', JSON.stringify(error));
+    } else if (meals) {
+      meals.forEach(m => {
+        kcalByDate[m.date] = (kcalByDate[m.date] || 0) + (m.calories || 0);
+      });
+    }
+
+    // First day offset (Sunday = 0)
+    const firstDow = new Date(calYear, calMonth, 1).getDay();
+    for (let i = 0; i < firstDow; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell day-empty';
+      grid.appendChild(cell);
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    for (let d = 1; d <= lastDay; d++) {
+      const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+
+      const hasData = kcalByDate[dateStr] !== undefined;
+      let kcalLabel = '';
+      if (hasData) {
+        cell.classList.add(calorieColorClass(kcalByDate[dateStr]));
+        kcalLabel = `<div class="day-icon">${kcalByDate[dateStr]}</div>`;
+      } else {
+        cell.classList.add('day-noinfo');
+      }
+
+      if (dateStr === todayStr) cell.classList.add('day-today');
+
+      cell.innerHTML = `<div class="day-num">${d}</div>${kcalLabel}`;
+
+      cell.onclick = () => {
+        if (hasData) {
+          alert(`${d} ${monthNamesID[calMonth]}: ${kcalByDate[dateStr]} kcal total`);
+        } else {
+          alert(`${d} ${monthNamesID[calMonth]}: belum ada data. Log makan di tab Home buat isi tanggal ini.`);
+        }
+      };
+
+      grid.appendChild(cell);
+    }
+  }
+
+  // Navigation
+  function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+
+    // Refresh data when landing on Home
+    if (pageId === 'home') {
+      loadCurrentWeight();
+      renderTodayMeals();
+      renderHomeWorkout();
+    }
+    if (pageId === 'calendar') {
+      renderCalendar();
+    }
+    if (pageId === 'workout') {
+      switchWorkoutTab('today');
+    }
+
+    window.scrollTo(0, 0);
+  }
+
+  // ============ BODY COMPOSITION ============
+
+  // All available metrics
+  const allMetrics = {
+    // DEFAULT (locked, always on)
+    bmr:        { icon: '🔥', name: 'BMR', unit: 'kcal', default: true, locked: true },
+    leanMass:   { icon: '💪', name: 'Lean mass', unit: 'kg', default: true, locked: true },
+    muscleMass: { icon: '🏋️', name: 'Muscle mass', unit: 'kg', default: true, locked: true },
+    bodyFat:    { icon: '📉', name: 'Body fat', unit: '%', default: true, locked: true },
+    visceralFat:{ icon: '🩸', name: 'Visceral fat', unit: 'level', default: true, locked: true },
+    // OPTIONAL
+    skeletal:   { icon: '🦴', name: 'Skeletal muscle mass', unit: 'kg' },
+    water:      { icon: '💧', name: 'Total body water', unit: 'L' },
+    bmi:        { icon: '📊', name: 'BMI', unit: '' },
+    protein:    { icon: '🥩', name: 'Protein mass', unit: 'kg' },
+    mineral:    { icon: '⚪', name: 'Mineral mass', unit: 'kg' },
+    waistHip:   { icon: '📏', name: 'Waist-hip ratio', unit: '' },
+    bone:       { icon: '🦴', name: 'Bone mass', unit: 'kg' },
+  };
+
+  // Currently enabled metrics + their data
+  let enabledMetrics = {
+    bmr:        { value: 1718, history: [
+      { date: '1 Jun 2026', value: 1718 },
+    ]},
+    leanMass:   { value: 62.4, history: [
+      { date: '1 Jun 2026', value: 62.4 },
+    ]},
+    muscleMass: { value: 35.9, history: [
+      { date: '1 Jun 2026', value: 35.9 },
+    ]},
+    bodyFat:    { value: 30.4, history: [
+      { date: '1 Jun 2026', value: 30.4 },
+    ]},
+    visceralFat:{ value: 11, history: [
+      { date: '1 Jun 2026', value: 11 },
+    ]},
+  };
+
+  // Custom metrics (user-added)
+  let customMetrics = [];
+
+  // Last update tracking
+  let lastUpdateDate = '1 Jun 2026';
+  let daysSinceUpdate = 20;
+
+  // Selected emoji for custom metric
+  let selectedMetricEmoji = '📏';
+
+  // Current metric being viewed in detail
+  let currentMetricKey = null;
+
+  // Goals per metric
+  const metricGoals = {
+    bmr: 1600,
+    leanMass: 60,
+    muscleMass: 36,
+    bodyFat: 22,
+    visceralFat: 8,
+  };
+
+  // Render body comp list
+  function renderBodyComp() {
+    const container = document.getElementById('bodyCompList');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    // Default + optional enabled metrics
+    Object.keys(enabledMetrics).forEach(key => {
+      const meta = allMetrics[key];
+      const data = enabledMetrics[key];
+      const trend = calculateTrend(data.history);
+
+      const row = document.createElement('div');
+      row.className = 'metric-row';
+      row.onclick = () => openMetricDetail(key);
+      row.innerHTML = `
+        <div class="metric-left">
+          <span class="metric-icon">${meta.icon}</span>
+          <span class="metric-name">${meta.name}</span>
+        </div>
+        <div class="metric-right">
+          <span class="metric-value">${formatValue(data.value, meta.unit)}</span>
+          <span class="metric-trend ${trend.class}">${trend.text}</span>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    // Custom metrics
+    customMetrics.forEach((m, idx) => {
+      const trend = calculateTrend(m.history);
+      const row = document.createElement('div');
+      row.className = 'metric-row';
+      row.onclick = () => openCustomMetricDetail(idx);
+      row.innerHTML = `
+        <div class="metric-left">
+          <span class="metric-icon">${m.emoji}</span>
+          <span class="metric-name">${m.name} <span class="metric-badge">custom</span></span>
+        </div>
+        <div class="metric-right">
+          <span class="metric-value">${formatValue(m.value, m.unit)}</span>
+          <span class="metric-trend ${trend.class}">${trend.text}</span>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    // Last updated
+    const lastUpd = document.createElement('div');
+    lastUpd.className = 'last-updated' + (daysSinceUpdate >= 14 ? ' warning' : '');
+    lastUpd.textContent = daysSinceUpdate >= 14
+      ? `⚠️ Last update ${daysSinceUpdate} hari lalu — update sekarang?`
+      : `Last updated: ${lastUpdateDate} (${daysSinceUpdate} hari lalu)`;
+    container.appendChild(lastUpd);
+  }
+
+  function formatValue(val, unit) {
+    if (unit === 'level') return `level ${val}`;
+    if (unit === '') return val;
+    if (unit === 'kcal') return `${val.toLocaleString('id-ID')} ${unit}`;
+    return `${val} ${unit}`;
+  }
+
+  function calculateTrend(history) {
+    if (!history || history.length < 2) return { class: 'trend-neutral', text: '—' };
+    const latest = history[history.length - 1].value;
+    const previous = history[history.length - 2].value;
+    const diff = latest - previous;
+    if (Math.abs(diff) < 0.1) return { class: 'trend-neutral', text: '→' };
+    if (diff > 0) return { class: 'trend-up', text: `↑ ${diff.toFixed(1)}` };
+    return { class: 'trend-down', text: `↓ ${Math.abs(diff).toFixed(1)}` };
+  }
+
+  // ============ METRIC DETAIL PAGE ============
+
+  function openMetricDetail(key) {
+    currentMetricKey = key;
+    const meta = allMetrics[key];
+    const data = enabledMetrics[key];
+    const goal = metricGoals[key];
+
+    document.getElementById('detailLabel').textContent = meta.name;
+    document.getElementById('detailCurrent').textContent = data.value;
+    document.getElementById('detailUnit').textContent = ` ${meta.unit}`;
+    document.getElementById('detailGoal').textContent = goal !== undefined ? formatValue(goal, meta.unit) : '—';
+
+    // Calculate delta from start
+    const startValue = data.history[0].value;
+    const currentValue = data.value;
+    const delta = currentValue - startValue;
+    const deltaText = delta > 0 ? `+${delta.toFixed(1)}` : delta.toFixed(1);
+    document.getElementById('detailDelta').textContent = `${deltaText} ${meta.unit}`;
+
+    drawChart(data.history);
+    renderHistory(data.history, meta.unit);
+    showPage('metricDetail');
+  }
+
+  function openCustomMetricDetail(idx) {
+    const m = customMetrics[idx];
+    document.getElementById('detailLabel').textContent = m.name;
+    document.getElementById('detailCurrent').textContent = m.value;
+    document.getElementById('detailUnit').textContent = ` ${m.unit}`;
+    document.getElementById('detailGoal').textContent = '—';
+
+    const startValue = m.history[0].value;
+    const delta = m.value - startValue;
+    const deltaText = delta > 0 ? `+${delta.toFixed(1)}` : delta.toFixed(1);
+    document.getElementById('detailDelta').textContent = `${deltaText} ${m.unit}`;
+
+    drawChart(m.history);
+    renderHistory(m.history, m.unit);
+    showPage('metricDetail');
+  }
+
+  function drawChart(history) {
+    const svg = document.getElementById('chartSvg');
+    svg.innerHTML = `
+      <defs>
+        <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" style="stop-color:#E8B647;stop-opacity:0.4" />
+          <stop offset="100%" style="stop-color:#E8B647;stop-opacity:0" />
+        </linearGradient>
+      </defs>
+    `;
+
+    if (history.length < 2) {
+      // Empty state — show "perlu lebih banyak data"
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      text.setAttribute('x', 160);
+      text.setAttribute('y', 100);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('fill', '#8B92A0');
+      text.setAttribute('font-size', '12');
+      text.textContent = 'Update lagi buat lihat chart trend';
+      svg.appendChild(text);
+
+      // Single dot
+      if (history.length === 1) {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', 160);
+        dot.setAttribute('cy', 130);
+        dot.setAttribute('r', 5);
+        dot.setAttribute('class', 'chart-dot');
+        svg.appendChild(dot);
+      }
+      return;
+    }
+
+    // Calculate points
+    const values = history.map(h => h.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const range = max - min || 1;
+    const padding = range * 0.15;
+
+    const chartWidth = 280;
+    const chartHeight = 140;
+    const offsetX = 20;
+    const offsetY = 20;
+
+    const points = history.map((h, i) => {
+      const x = offsetX + (i / (history.length - 1)) * chartWidth;
+      const y = offsetY + chartHeight - ((h.value - min + padding) / (range + 2 * padding)) * chartHeight;
+      return { x, y, value: h.value, date: h.date };
+    });
+
+    // Draw area
+    const areaPath = `M ${points[0].x} ${offsetY + chartHeight} L ${points.map(p => `${p.x} ${p.y}`).join(' L ')} L ${points[points.length-1].x} ${offsetY + chartHeight} Z`;
+    const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    area.setAttribute('d', areaPath);
+    area.setAttribute('class', 'chart-area');
+    svg.appendChild(area);
+
+    // Draw line
+    const linePath = `M ${points.map(p => `${p.x} ${p.y}`).join(' L ')}`;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    line.setAttribute('d', linePath);
+    line.setAttribute('class', 'chart-line');
+    svg.appendChild(line);
+
+    // Draw dots
+    points.forEach(p => {
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', p.x);
+      dot.setAttribute('cy', p.y);
+      dot.setAttribute('r', 4);
+      dot.setAttribute('class', 'chart-dot');
+      svg.appendChild(dot);
+    });
+
+    // X-axis labels (first, middle, last)
+    const labelIndices = history.length <= 4
+      ? history.map((_, i) => i)
+      : [0, Math.floor(history.length / 2), history.length - 1];
+
+    labelIndices.forEach(i => {
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      const label = history[i].date.split(' ').slice(0, 2).join(' '); // "1 Jun"
+      text.setAttribute('x', points[i].x);
+      text.setAttribute('y', offsetY + chartHeight + 16);
+      text.setAttribute('text-anchor', 'middle');
+      text.setAttribute('class', 'chart-label');
+      text.textContent = label;
+      svg.appendChild(text);
+    });
+  }
+
+  function renderHistory(history, unit) {
+    const container = document.getElementById('historyList');
+    container.innerHTML = '';
+
+    // Reverse to show newest first
+    [...history].reverse().forEach((h, idx, arr) => {
+      const item = document.createElement('div');
+      item.className = 'history-item';
+
+      // Calculate delta from previous entry
+      let deltaHtml = '';
+      if (idx < arr.length - 1) {
+        const diff = h.value - arr[idx + 1].value;
+        if (Math.abs(diff) >= 0.1) {
+          const cls = diff > 0 ? 'trend-up' : 'trend-down';
+          const sign = diff > 0 ? '+' : '';
+          deltaHtml = `<span class="history-delta ${cls}">${sign}${diff.toFixed(1)}</span>`;
+        }
+      }
+
+      const isStart = idx === arr.length - 1;
+      item.innerHTML = `
+        <div class="history-date">${h.date}${isStart ? ' (start)' : ''}</div>
+        <div>
+          <span class="history-value">${formatValue(h.value, unit)}</span>
+          ${deltaHtml}
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  // ============ UPDATE BODY COMP MODALS ============
+
+  function openUpdateBodyCompModal() {
+    document.getElementById('updateBodyCompModal').classList.add('active');
+  }
+
+  function openPhotoMethod() {
+    document.getElementById('updateBodyCompModal').classList.remove('active');
+    setTimeout(() => {
+      document.getElementById('photoExtractResult').classList.remove('show');
+      document.getElementById('photoInputModal').classList.add('active');
+    }, 200);
+  }
+
+  function openManualMethod() {
+    document.getElementById('updateBodyCompModal').classList.remove('active');
+    setTimeout(() => {
+      renderManualInputFields();
+      document.getElementById('manualInputModal').classList.add('active');
+    }, 200);
+  }
+
+  function openVoiceMethod() {
+    document.getElementById('updateBodyCompModal').classList.remove('active');
+    setTimeout(() => {
+      // Reset voice UI
+      document.getElementById('voiceCircle').classList.remove('recording');
+      document.getElementById('voiceCircle').textContent = '🎤';
+      document.getElementById('voiceStatus').textContent = 'Tap untuk mulai';
+      document.getElementById('voiceTranscript').textContent = 'Contoh: "BMR aku 1700, body fat 28 persen, muscle mass 36 kilo, lean 63"';
+      document.getElementById('voiceTranscript').classList.remove('has-content');
+      document.getElementById('voiceSaveBtn').style.display = 'none';
+      document.getElementById('voiceInputModal').classList.add('active');
+    }, 200);
+  }
+
+  // Manual input
+  function renderManualInputFields() {
+    const container = document.getElementById('manualInputFields');
+    container.innerHTML = '';
+    Object.keys(enabledMetrics).forEach(key => {
+      const meta = allMetrics[key];
+      const data = enabledMetrics[key];
+      const group = document.createElement('div');
+      group.className = 'form-group';
+      group.innerHTML = `
+        <label class="form-label">${meta.icon} ${meta.name} ${meta.unit ? `(${meta.unit})` : ''}</label>
+        <input class="form-input" type="number" step="0.1" id="manual_${key}" value="${data.value}">
+      `;
+      container.appendChild(group);
+    });
+
+    // Custom metrics
+    customMetrics.forEach((m, idx) => {
+      const group = document.createElement('div');
+      group.className = 'form-group';
+      group.innerHTML = `
+        <label class="form-label">${m.emoji} ${m.name} ${m.unit ? `(${m.unit})` : ''}</label>
+        <input class="form-input" type="number" step="0.1" id="manual_custom_${idx}" value="${m.value}">
+      `;
+      container.appendChild(group);
+    });
+  }
+
+  function saveManualUpdate() {
+    const today = getTodayString();
+    let updated = 0;
+
+    Object.keys(enabledMetrics).forEach(key => {
+      const input = document.getElementById(`manual_${key}`);
+      if (input) {
+        const val = parseFloat(input.value);
+        if (!isNaN(val) && val !== enabledMetrics[key].value) {
+          enabledMetrics[key].value = val;
+          enabledMetrics[key].history.push({ date: today, value: val });
+          updated++;
+        }
+      }
+    });
+
+    customMetrics.forEach((m, idx) => {
+      const input = document.getElementById(`manual_custom_${idx}`);
+      if (input) {
+        const val = parseFloat(input.value);
+        if (!isNaN(val) && val !== m.value) {
+          m.value = val;
+          m.history.push({ date: today, value: val });
+          updated++;
+        }
+      }
+    });
+
+    lastUpdateDate = today;
+    daysSinceUpdate = 0;
+
+    document.getElementById('manualInputModal').classList.remove('active');
+    renderBodyComp();
+
+    if (updated > 0) {
+      setTimeout(() => alert(`✓ ${updated} metric berhasil diupdate!`), 300);
+    }
+  }
+
+  // Voice input
+  let isRecording = false;
+
+  function toggleRecording() {
+    isRecording = !isRecording;
+    const circle = document.getElementById('voiceCircle');
+    const status = document.getElementById('voiceStatus');
+    const transcript = document.getElementById('voiceTranscript');
+    const saveBtn = document.getElementById('voiceSaveBtn');
+
+    if (isRecording) {
+      circle.classList.add('recording');
+      circle.textContent = '⏹️';
+      status.textContent = 'Recording... tap lagi untuk stop';
+      transcript.textContent = '...';
+      transcript.classList.remove('has-content');
+
+      // Simulate voice recognition after 2.5s
+      setTimeout(() => {
+        if (isRecording) {
+          transcript.textContent = '"BMR aku turun ke 1700, body fat sekarang 28 persen, muscle mass 36 kilo, lean mass 63"';
+          transcript.classList.add('has-content');
+          saveBtn.style.display = 'block';
+        }
+      }, 2500);
+    } else {
+      circle.classList.remove('recording');
+      circle.textContent = '🎤';
+      status.textContent = 'Tap untuk record ulang';
+    }
+  }
+
+  function processVoiceInput() {
+    // Simulate AI parsing voice → numbers
+    const today = getTodayString();
+    const parsed = {
+      bmr: 1700,
+      bodyFat: 28,
+      muscleMass: 36,
+      leanMass: 63,
+    };
+
+    Object.keys(parsed).forEach(key => {
+      if (enabledMetrics[key]) {
+        enabledMetrics[key].value = parsed[key];
+        enabledMetrics[key].history.push({ date: today, value: parsed[key] });
+      }
+    });
+
+    lastUpdateDate = today;
+    daysSinceUpdate = 0;
+
+    document.getElementById('voiceInputModal').classList.remove('active');
+    renderBodyComp();
+    setTimeout(() => alert('✓ Voice parsed: 4 metric updated!'), 300);
+  }
+
+  // Photo extract
+  function simulatePhotoExtract() {
+    setTimeout(() => {
+      // Simulated extracted values
+      const extracted = {
+        bmr: { value: 1685, unit: 'kcal', icon: '🔥', name: 'BMR' },
+        leanMass: { value: 62.8, unit: 'kg', icon: '💪', name: 'Lean mass' },
+        muscleMass: { value: 36.2, unit: 'kg', icon: '🏋️', name: 'Muscle mass' },
+        bodyFat: { value: 27.8, unit: '%', icon: '📉', name: 'Body fat' },
+        visceralFat: { value: 9, unit: 'level', icon: '🩸', name: 'Visceral fat' },
+      };
+
+      const grid = document.getElementById('extractedGrid');
+      grid.innerHTML = '';
+      Object.keys(extracted).forEach(key => {
+        const e = extracted[key];
+        const item = document.createElement('div');
+        item.className = 'analyzed-item';
+        item.innerHTML = `${e.icon} ${e.name}<strong>${e.value}${e.unit ? ' ' + e.unit : ''}</strong>`;
+        grid.appendChild(item);
+      });
+
+      // Store for save
+      window._extractedData = extracted;
+      document.getElementById('photoExtractResult').classList.add('show');
+    }, 1000);
+  }
+
+  function savePhotoExtract() {
+    const today = getTodayString();
+    const extracted = window._extractedData || {};
+
+    Object.keys(extracted).forEach(key => {
+      if (enabledMetrics[key]) {
+        enabledMetrics[key].value = extracted[key].value;
+        enabledMetrics[key].history.push({ date: today, value: extracted[key].value });
+      }
+    });
+
+    lastUpdateDate = today;
+    daysSinceUpdate = 0;
+
+    document.getElementById('photoInputModal').classList.remove('active');
+    document.getElementById('photoExtractResult').classList.remove('show');
+    renderBodyComp();
+    setTimeout(() => alert('✓ 5 metric extracted dari foto & disimpan!'), 300);
+  }
+
+  // ============ CUSTOMIZE METRICS ============
+
+  function openCustomizeMetricsModal() {
+    renderMetricsToggles();
+    document.getElementById('customizeMetricsModal').classList.add('active');
+  }
+
+  function renderMetricsToggles() {
+    const container = document.getElementById('metricsTogglesList');
+    container.innerHTML = '<div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; font-weight: 600;">Default (locked)</div>';
+
+    // Default metrics (locked)
+    Object.keys(allMetrics).filter(k => allMetrics[k].default).forEach(key => {
+      const meta = allMetrics[key];
+      const row = document.createElement('div');
+      row.className = 'toggle-row';
+      row.innerHTML = `
+        <div class="toggle-info">
+          <div class="toggle-name">${meta.icon} ${meta.name}</div>
+          <div class="toggle-desc">Default wajib aktif</div>
+        </div>
+        <div class="toggle-switch active locked"></div>
+      `;
+      container.appendChild(row);
+    });
+
+    // Optional metrics
+    const optionalHeader = document.createElement('div');
+    optionalHeader.style.cssText = 'font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 8px; font-weight: 600;';
+    optionalHeader.textContent = 'Optional';
+    container.appendChild(optionalHeader);
+
+    Object.keys(allMetrics).filter(k => !allMetrics[k].default).forEach(key => {
+      const meta = allMetrics[key];
+      const isEnabled = !!enabledMetrics[key];
+      const row = document.createElement('div');
+      row.className = 'toggle-row';
+      row.innerHTML = `
+        <div class="toggle-info">
+          <div class="toggle-name">${meta.icon} ${meta.name}</div>
+          <div class="toggle-desc">${meta.unit || 'no unit'}</div>
+        </div>
+        <div class="toggle-switch ${isEnabled ? 'active' : ''}" data-key="${key}"></div>
+      `;
+      container.appendChild(row);
+
+      // Toggle handler
+      row.querySelector('.toggle-switch').onclick = function() {
+        if (this.classList.contains('locked')) return;
+        const key = this.dataset.key;
+        if (enabledMetrics[key]) {
+          if (confirm(`Hapus "${allMetrics[key].name}"? History bakal hilang.`)) {
+            delete enabledMetrics[key];
+            this.classList.remove('active');
+            renderBodyComp();
+          }
+        } else {
+          // Need initial value — for prototype, just default
+          enabledMetrics[key] = {
+            value: 0,
+            history: [{ date: getTodayString(), value: 0 }]
+          };
+          this.classList.add('active');
+          alert(`${allMetrics[key].name} ditambahkan! Update manual buat isi nilai awal.`);
+          renderBodyComp();
+        }
+      };
+    });
+
+    // Custom metrics section
+    if (customMetrics.length > 0) {
+      const customHeader = document.createElement('div');
+      customHeader.style.cssText = 'font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 20px 0 8px; font-weight: 600;';
+      customHeader.textContent = 'Custom';
+      container.appendChild(customHeader);
+
+      customMetrics.forEach((m, idx) => {
+        const row = document.createElement('div');
+        row.className = 'toggle-row';
+        row.innerHTML = `
+          <div class="toggle-info">
+            <div class="toggle-name">${m.emoji} ${m.name}</div>
+            <div class="toggle-desc">${m.unit || 'no unit'} • Custom</div>
+          </div>
+          <div class="toggle-switch active" data-idx="${idx}"></div>
+        `;
+        container.appendChild(row);
+
+        row.querySelector('.toggle-switch').onclick = function() {
+          if (confirm(`Hapus custom metric "${m.name}"?`)) {
+            customMetrics.splice(idx, 1);
+            renderMetricsToggles();
+            renderBodyComp();
+          }
+        };
+      });
+    }
+  }
+
+  // Custom metric
+  function openAddCustomMetric() {
+    document.getElementById('customizeMetricsModal').classList.remove('active');
+    setTimeout(() => {
+      document.getElementById('customMetricName').value = '';
+      document.getElementById('customMetricUnit').value = '';
+      document.getElementById('customMetricValue').value = '';
+      selectedMetricEmoji = '📏';
+      document.querySelectorAll('#metricEmojiPicker .emoji-option').forEach(el => {
+        el.classList.toggle('selected', el.dataset.emoji === '📏');
+      });
+      document.getElementById('addCustomMetricModal').classList.add('active');
+    }, 200);
+  }
+
+  // Init metric emoji picker
+  document.querySelectorAll('#metricEmojiPicker .emoji-option').forEach(el => {
+    el.onclick = () => {
+      document.querySelectorAll('#metricEmojiPicker .emoji-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedMetricEmoji = el.dataset.emoji;
+    };
+  });
+
+  function saveCustomMetric() {
+    const name = document.getElementById('customMetricName').value.trim();
+    const unit = document.getElementById('customMetricUnit').value.trim();
+    const value = parseFloat(document.getElementById('customMetricValue').value);
+
+    if (!name || isNaN(value)) {
+      alert('Nama dan nilai awal wajib diisi!');
+      return;
+    }
+
+    customMetrics.push({
+      emoji: selectedMetricEmoji,
+      name,
+      unit,
+      value,
+      history: [{ date: getTodayString(), value }]
+    });
+
+    document.getElementById('addCustomMetricModal').classList.remove('active');
+    renderBodyComp();
+    setTimeout(() => {
+      openCustomizeMetricsModal();
+    }, 300);
+  }
+
+  // Helper
+  function getTodayString() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const d = new Date();
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+
+  // Initial render
+  renderBodyComp();
+
+  // ============ WEIGHT TRACKING ============
+
+  // Fallback profile data — replace by querying `profiles` table once you insert a row
+  let profileData = { bb_start: 89.6, bb_target: 80.0 };
+  let profileId = null;
+  let targetData = {
+    target_kcal: 1700, target_protein: 175,
+    target_carbs_min: 95, target_carbs_max: 120,
+    target_fat_min: 40, target_fat_max: 50,
+    deficit_min: 750, deficit_max: 1000
+  };
+
+  async function loadProfile() {
+    const { data, error } = await sb.from('profiles').select('*').limit(1);
+    if (error) {
+      console.error('Load profile error:', JSON.stringify(error));
+      return;
+    }
+    if (data && data.length > 0) {
+      const p = data[0];
+      profileId = p.id;
+      profileData.bb_start = p.bb_start ?? 89.6;
+      profileData.bb_target = p.bb_target ?? 80.0;
+      // targets may be null if columns just added — fall back to defaults
+      targetData.target_kcal = p.target_kcal ?? 1700;
+      targetData.target_protein = p.target_protein ?? 175;
+      targetData.target_carbs_min = p.target_carbs_min ?? 95;
+      targetData.target_carbs_max = p.target_carbs_max ?? 120;
+      targetData.target_fat_min = p.target_fat_min ?? 40;
+      targetData.target_fat_max = p.target_fat_max ?? 50;
+      targetData.deficit_min = p.deficit_min ?? 750;
+      targetData.deficit_max = p.deficit_max ?? 1000;
+    }
+    renderHeroWeight();
+    renderTargets();
+  }
+
+  function renderTargets() {
+    const k = document.getElementById('targetKcalDisplay');
+    if (!k) return;
+    k.textContent = `${targetData.target_kcal.toLocaleString('id-ID')} kcal`;
+    document.getElementById('targetProteinDisplay').textContent = `${targetData.target_protein} g`;
+    document.getElementById('targetCarbsDisplay').textContent = `${targetData.target_carbs_min}-${targetData.target_carbs_max} g`;
+    document.getElementById('targetFatDisplay').textContent = `${targetData.target_fat_min}-${targetData.target_fat_max} g`;
+    document.getElementById('targetDeficitDisplay').textContent = `${targetData.deficit_min.toLocaleString('id-ID')}-${targetData.deficit_max.toLocaleString('id-ID')} kcal`;
+  }
+
+  function openTargetEditModal() {
+    document.getElementById('editKcal').value = targetData.target_kcal;
+    document.getElementById('editProtein').value = targetData.target_protein;
+    document.getElementById('editCarbsMin').value = targetData.target_carbs_min;
+    document.getElementById('editCarbsMax').value = targetData.target_carbs_max;
+    document.getElementById('editFatMin').value = targetData.target_fat_min;
+    document.getElementById('editFatMax').value = targetData.target_fat_max;
+    document.getElementById('editDeficitMin').value = targetData.deficit_min;
+    document.getElementById('editDeficitMax').value = targetData.deficit_max;
+    document.getElementById('targetEditModal').classList.add('active');
+  }
+
+  async function saveTargets() {
+    if (!profileId) {
+      alert('Profile belum ter-load. Refresh dulu.');
+      return;
+    }
+    const payload = {
+      target_kcal: parseInt(document.getElementById('editKcal').value) || 1700,
+      target_protein: parseInt(document.getElementById('editProtein').value) || 175,
+      target_carbs_min: parseInt(document.getElementById('editCarbsMin').value) || 95,
+      target_carbs_max: parseInt(document.getElementById('editCarbsMax').value) || 120,
+      target_fat_min: parseInt(document.getElementById('editFatMin').value) || 40,
+      target_fat_max: parseInt(document.getElementById('editFatMax').value) || 50,
+      deficit_min: parseInt(document.getElementById('editDeficitMin').value) || 750,
+      deficit_max: parseInt(document.getElementById('editDeficitMax').value) || 1000
+    };
+    const { error } = await sb.from('profiles').update(payload).eq('id', profileId);
+    if (error) {
+      console.error('Save targets error:', JSON.stringify(error));
+      alert('Gagal simpan target: ' + (error.message || JSON.stringify(error)));
+      return;
+    }
+    Object.assign(targetData, payload);
+    document.getElementById('targetEditModal').classList.remove('active');
+    renderTargets();
+  }
+  let currentWeight = null;
+
+  function openWeightInputModal() {
+    document.getElementById('weightInput').value = currentWeight || '';
+    document.getElementById('weightInputModal').classList.add('active');
+  }
+
+  async function submitWeight() {
+    const val = parseFloat(document.getElementById('weightInput').value);
+    if (!val || val < 30 || val > 250) {
+      alert('Masukin angka BB yang valid');
+      return;
+    }
+    const saved = await saveWeightToDb(val);
+    if (saved === null) return; // error already alerted inside saveWeightToDb
+
+    currentWeight = val;
+    document.getElementById('weightInputModal').classList.remove('active');
+    renderHeroWeight();
+  }
+
+  function renderHeroWeight() {
+    const heroWeightEl = document.getElementById('heroWeight');
+    const startEl = document.getElementById('heroStartWeight');
+    const targetEl = document.getElementById('heroTargetWeight');
+    const lostEl = document.getElementById('heroLostWeight');
+
+    if (!heroWeightEl) return;
+
+    heroWeightEl.innerHTML = currentWeight ? `${currentWeight}<span> kg</span>` : `--<span> kg</span>`;
+    startEl.textContent = `${profileData.bb_start} kg`;
+    targetEl.textContent = `${profileData.bb_target} kg`;
+
+    if (currentWeight) {
+      const lost = (profileData.bb_start - currentWeight).toFixed(1);
+      lostEl.textContent = `${lost > 0 ? '-' : '+'}${Math.abs(lost)} kg`;
+    } else {
+      lostEl.textContent = '--';
+    }
+  }
+
+  // Load most recent weight entry from DB on page load
+  async function loadCurrentWeight() {
+    const { data, error } = await sb
+      .from('daily_logs')
+      .select('date, weight_kg')
+      .not('weight_kg', 'is', null)
+      .order('date', { ascending: false })
+      .limit(1);
+
+    if (error) {
+      console.error('Load current weight error:', JSON.stringify(error));
+      alert('Load BB gagal: ' + (error.message || JSON.stringify(error)));
+      renderHeroWeight();
+      return;
+    }
+    if (data && data.length > 0) {
+      currentWeight = data[0].weight_kg;
+    }
+    renderHeroWeight();
+  }
+
+  loadCurrentWeight();
+  loadProfile();
+
+  // Dynamic DAY counter from challenge start (1 Jun 2026)
+  (function setDayCounter(){
+    const el = document.getElementById('dayCounter');
+    if (!el) return;
+    const start = new Date('2026-06-01');
+    const dayNum = Math.floor((new Date() - start) / 86400000) + 1;
+    el.textContent = `DAY ${dayNum} / 90`;
+  })();
+
+  // ============ HOME WORKOUT SUMMARY (read-only) ============
+  async function renderHomeWorkout() {
+    const container = document.getElementById('homeWorkoutSummary');
+    if (!container) return;
+    const today = todayISO();
+
+    // Get today's session
+    const { data: sessions } = await sb
+      .from('workout_sessions')
+      .select('id')
+      .eq('date', today)
+      .limit(1);
+
+    let exerciseCount = 0;
+    let exerciseNames = [];
+    if (sessions && sessions.length > 0) {
+      const { data: logs } = await sb
+        .from('exercise_logs')
+        .select('exercise_name')
+        .eq('session_id', sessions[0].id);
+      if (logs) {
+        exerciseCount = logs.length;
+        exerciseNames = logs.map(l => l.exercise_name);
+      }
+    }
+
+    // Get today's cardio
+    const { data: cardio } = await sb
+      .from('cardio_logs')
+      .select('type, duration_min')
+      .eq('date', today);
+
+    const cardioCount = cardio ? cardio.length : 0;
+
+    // Render
+    if (exerciseCount === 0 && cardioCount === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+          Belum ada workout hari ini. Log di tab Workout.
+        </div>`;
+      return;
+    }
+
+    let html = '';
+    if (exerciseCount > 0) {
+      html += `
+        <div class="workout-item" onclick="showPage('workout')" style="cursor:pointer;">
+          <div class="workout-icon">💪</div>
+          <div class="workout-info">
+            <div class="workout-name">${exerciseCount} exercise</div>
+            <div class="workout-detail">${exerciseNames.slice(0,3).join(', ')}${exerciseNames.length>3?'...':''}</div>
+          </div>
+        </div>`;
+    }
+    if (cardioCount > 0) {
+      const totalMin = cardio.reduce((s,c)=>s+(c.duration_min||0),0);
+      const types = [...new Set(cardio.map(c=>c.type))].join(', ');
+      html += `
+        <div class="workout-item" onclick="showPage('workout')" style="cursor:pointer;">
+          <div class="workout-icon">🏃</div>
+          <div class="workout-info">
+            <div class="workout-name">${cardioCount} cardio · ${totalMin} min</div>
+            <div class="workout-detail">${types}</div>
+          </div>
+        </div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  // ============ TODAY MEALS RENDER ============
+  async function renderTodayMeals() {
+    const container = document.getElementById('todayMealsList');
+    if (!container) return;
+
+    const meals = await loadTodayMeals();
+
+    if (!meals || meals.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">
+          Belum ada makan hari ini. Tap "Tambah Makanan" di atas.
+        </div>`;
+      updateDailyStats(meals || []);
+      return;
+    }
+
+    container.innerHTML = '';
+    meals.forEach(m => {
+      const timeStr = m.time ? m.time.substring(0,5) : '--:--';
+      const card = document.createElement('div');
+      card.className = 'meal-card';
+      card.innerHTML = `
+        <div class="meal-emoji">${m.emoji || '🍽️'}</div>
+        <div class="meal-info">
+          <div class="meal-name">${m.name}</div>
+          <div class="meal-time">${timeStr} · ${m.protein || 0}g protein</div>
+        </div>
+        <div class="meal-kcal">${m.calories} kcal</div>
+      `;
+      card.onclick = async () => {
+        if (confirm(`Hapus "${m.name}"?`)) {
+          const { error } = await sb.from('meals').delete().eq('id', m.id);
+          if (error) { alert('Gagal hapus: ' + error.message); return; }
+          renderTodayMeals();
+        }
+      };
+      container.appendChild(card);
+    });
+
+    updateDailyStats(meals);
+  }
+
+  function updateDailyStats(meals) {
+    const totalKcal = meals.reduce((s,m) => s + (m.calories || 0), 0);
+    const totalProtein = meals.reduce((s,m) => s + (parseFloat(m.protein) || 0), 0);
+
+    const kcalEl = document.querySelector('.stat-card .stat-value');
+    if (kcalEl) {
+      kcalEl.innerHTML = `${totalKcal.toLocaleString('id-ID')}<span class="stat-suffix"> / 1.700</span>`;
+      const bar = kcalEl.parentElement.querySelector('.stat-bar-fill');
+      if (bar) bar.style.width = Math.min(100, (totalKcal/1700)*100) + '%';
+    }
+
+    const proteinCard = document.querySelectorAll('.stat-card')[1];
+    if (proteinCard) {
+      const pVal = proteinCard.querySelector('.stat-value');
+      if (pVal) pVal.innerHTML = `${totalProtein.toFixed(0)}<span class="stat-suffix">g / 175</span>`;
+      const pBar = proteinCard.querySelector('.stat-bar-fill');
+      if (pBar) pBar.style.width = Math.min(100, (totalProtein/175)*100) + '%';
+    }
+  }
+
+  renderTodayMeals();
+  renderHomeWorkout();
+
+  // ============ CHAT TEMPLATE ============
+  function copyChatTemplate() {
+    const dayNum = Math.floor((new Date() - new Date('2026-06-01')) / (1000*60*60*24)) + 1;
+    const bb = currentWeight ? `${currentWeight} kg` : '--';
+    const template = `Halo Claude, update Day ${dayNum}
+BB pagi: ${bb}
+Sarapan: --
+Workout: --
+Bahu: --/10`;
+
+    navigator.clipboard.writeText(template).then(() => {
+      alert('Template dicopy — paste di Claude');
+    }).catch(() => {
+      alert('Gagal copy otomatis. Copy manual dari layar.');
+    });
+  }
+
+  // ============ WORKOUT V4 ============
+
+  // Exercise library (empty by default — user fills in)
+  let exerciseLibrary = [];
+
+  // Today's logged exercises with sets data
+  let todayExercises = [];
+  let todayCardio = [];
+
+  // Workout history (past sessions)
+  let workoutHistory = [];
+
+  // Body parts that conflict with injury (auto-suggest skip)
+  // Currently: shoulder injury
+  const injuredBodyParts = []; // cedera cleared — no auto-skip
+
+  // Tracking exercise being logged
+  let currentExerciseIdx = null;
+  let selectedExerciseEmoji = '🏋️';
+  let currentSets = [];
+
+  // Body part display
+  const bodyPartLabels = {
+    leg: { icon: '🦵', label: 'Leg' },
+    chest: { icon: '💪', label: 'Chest' },
+    back: { icon: '🔙', label: 'Back' },
+    shoulder: { icon: '🏋️', label: 'Shoulder' },
+    arm: { icon: '💪', label: 'Arm' },
+    core: { icon: '⚡', label: 'Core' },
+    other: { icon: '📦', label: 'Other' }
+  };
+
+  // ============ DB LOADERS (hydrate from Supabase) ============
+
+  async function loadExerciseLibrary() {
+    const { data, error } = await sb
+      .from('exercise_library')
+      .select('*')
+      .order('name', { ascending: true });
+    if (error) {
+      console.error('Load library error:', JSON.stringify(error));
+      return;
+    }
+    if (data) {
+      exerciseLibrary = data.map(row => ({
+        id: row.id,
+        name: row.name,
+        emoji: row.emoji || '🏋️',
+        bodyPart: row.body_part || 'other'
+      }));
+    }
+  }
+
+  async function loadTodayWorkout() {
+    const today = todayISO();
+    todayExercises = [];
+    todayCardio = [];
+
+    // Today's session
+    const { data: sessions } = await sb
+      .from('workout_sessions')
+      .select('id')
+      .eq('date', today)
+      .limit(1);
+
+    if (sessions && sessions.length > 0) {
+      todaySessionId = sessions[0].id;
+      const { data: logs } = await sb
+        .from('exercise_logs')
+        .select('id, exercise_name, order_index')
+        .eq('session_id', sessions[0].id)
+        .order('order_index', { ascending: true });
+
+      if (logs) {
+        for (const log of logs) {
+          const { data: setsData } = await sb
+            .from('sets')
+            .select('weight_kg, reps, set_number')
+            .eq('exercise_log_id', log.id)
+            .order('set_number', { ascending: true });
+          todayExercises.push({
+            name: log.exercise_name,
+            emoji: '🏋️',
+            bodyPart: 'other',
+            logId: log.id,
+            sets: (setsData || []).map(s => ({ weight: s.weight_kg, reps: s.reps }))
+          });
+        }
+      }
+    }
+
+    // Today's cardio
+    const { data: cardioData } = await sb
+      .from('cardio_logs')
+      .select('*')
+      .eq('date', today);
+    if (cardioData) {
+      todayCardio = cardioData.map(c => ({
+        type: c.type,
+        duration: c.duration_min,
+        distance: c.distance_km,
+        calories: c.calories_burn
+      }));
+    }
+  }
+
+  // ============ TAB SWITCHING ============
+
+  async function switchWorkoutTab(tab) {
+    document.querySelectorAll('.workout-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-wtab="${tab}"]`).classList.add('active');
+
+    ['today', 'library', 'history'].forEach(t => {
+      const el = document.getElementById(`wtab-${t}`);
+      if (el) el.style.display = t === tab ? 'block' : 'none';
+    });
+
+    if (tab === 'today') { await loadTodayWorkout(); renderToday(); }
+    if (tab === 'library') { await loadExerciseLibrary(); renderLibrary(); }
+    if (tab === 'history') renderWorkoutHistory();
+  }
+
+  // ============ TODAY TAB ============
+
+  function renderToday() {
+    // Injury banner
+    const banner = document.getElementById('injuryBanner');
+    if (injuredBodyParts.length > 0) {
+      banner.innerHTML = `
+        <div class="suggest-banner">
+          <div class="suggest-icon">⚠️</div>
+          <div class="suggest-content">
+            <div class="suggest-title">Cedera Bahu Aktif</div>
+            <div class="suggest-text">Skip semua upper body (chest, back, shoulder, arm). Suggested: leg + cardio + core only sampai sembuh total.</div>
+          </div>
+        </div>
+      `;
+    } else {
+      banner.innerHTML = '';
+    }
+
+    // Exercises
+    const container = document.getElementById('todayExercises');
+    if (todayExercises.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="padding: 30px 20px;">
+          <div class="empty-icon">💪</div>
+          <div class="empty-title">Belum ada exercise hari ini</div>
+          <div class="empty-desc">Tap "Tambah" buat pilih dari library</div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = '';
+      todayExercises.forEach((ex, idx) => {
+        const item = document.createElement('div');
+        item.className = 'exercise-item';
+
+        const setsInfo = ex.sets && ex.sets.length > 0
+          ? `${ex.sets.length} set · ${ex.sets.map(s => `${s.weight}kg×${s.reps}`).join(', ')}`
+          : 'Belum di-log — tap untuk input';
+
+        const isPR = checkPR(ex);
+        item.innerHTML = `
+          <div class="exercise-icon">${ex.emoji}</div>
+          <div class="exercise-info">
+            <div class="exercise-name">${ex.name} ${isPR ? '<span class="pr-badge">PR 🔥</span>' : ''}</div>
+            <div class="exercise-meta">${setsInfo}</div>
+          </div>
+          <div class="exercise-actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); deleteTodayExercise(${idx})">🗑</button>
+          </div>
+        `;
+        item.onclick = () => openLogSets(idx);
+        container.appendChild(item);
+      });
+    }
+
+    // Cardio
+    const cardioContainer = document.getElementById('todayCardio');
+    if (todayCardio.length === 0) {
+      cardioContainer.innerHTML = `
+        <div class="empty-state" style="padding: 20px;">
+          <div style="font-size: 32px; opacity: 0.4; margin-bottom: 8px;">🏃</div>
+          <div class="empty-desc">Belum ada cardio hari ini</div>
+        </div>
+      `;
+    } else {
+      cardioContainer.innerHTML = '';
+      todayCardio.forEach((c, idx) => {
+        const item = document.createElement('div');
+        item.className = 'exercise-item';
+        item.innerHTML = `
+          <div class="exercise-icon">🏃</div>
+          <div class="exercise-info">
+            <div class="exercise-name">${c.type}</div>
+            <div class="exercise-meta">${c.duration} min · ${c.distance ? c.distance + ' km · ' : ''}${c.calories} kcal</div>
+          </div>
+          <div class="exercise-actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); deleteTodayCardio(${idx})">🗑</button>
+          </div>
+        `;
+        cardioContainer.appendChild(item);
+      });
+    }
+  }
+
+  function deleteTodayExercise(idx) {
+    if (confirm(`Hapus "${todayExercises[idx].name}" dari log hari ini?`)) {
+      todayExercises.splice(idx, 1);
+      renderToday();
+    }
+  }
+
+  function deleteTodayCardio(idx) {
+    if (confirm('Hapus cardio ini?')) {
+      todayCardio.splice(idx, 1);
+      renderToday();
+    }
+  }
+
+  // Check if today's best set is a PR vs history
+  function checkPR(exercise) {
+    if (!exercise.sets || exercise.sets.length === 0) return false;
+    const todayMax = Math.max(...exercise.sets.map(s => parseFloat(s.weight) || 0));
+    if (todayMax === 0) return false;
+
+    // Check history for same exercise
+    let historyMax = 0;
+    workoutHistory.forEach(session => {
+      session.exercises.forEach(ex => {
+        if (ex.name === exercise.name && ex.sets) {
+          ex.sets.forEach(s => {
+            const w = parseFloat(s.weight) || 0;
+            if (w > historyMax) historyMax = w;
+          });
+        }
+      });
+    });
+
+    return todayMax > historyMax;
+  }
+
+  // ============ LIBRARY TAB ============
+
+  function renderLibrary() {
+    const container = document.getElementById('libraryList');
+
+    if (exerciseLibrary.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">Library lo masih kosong</div>
+          <div class="empty-desc">Tambahin exercise yang lo biasa lakuin di gym. Sekali setup, bisa pakai berulang.</div>
+          <button class="btn-primary" onclick="openAddExerciseToLibrary()" style="display: inline-flex; padding: 12px 24px;">+ Tambah Exercise Pertama</button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = '';
+
+    // Group by body part
+    const grouped = {};
+    exerciseLibrary.forEach((ex, idx) => {
+      const bp = ex.bodyPart || 'other';
+      if (!grouped[bp]) grouped[bp] = [];
+      grouped[bp].push({ ...ex, idx });
+    });
+
+    Object.keys(grouped).forEach(bp => {
+      const meta = bodyPartLabels[bp];
+      const header = document.createElement('div');
+      header.style.cssText = 'font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin: 16px 0 8px; font-weight: 600;';
+      header.innerHTML = `${meta.icon} ${meta.label}`;
+      container.appendChild(header);
+
+      grouped[bp].forEach(ex => {
+        const isInjured = injuredBodyParts.includes(bp);
+        const item = document.createElement('div');
+        item.className = 'exercise-item' + (isInjured ? ' injury-flag' : '');
+        item.innerHTML = `
+          <div class="exercise-icon">${ex.emoji}</div>
+          <div class="exercise-info">
+            <div class="exercise-name">
+              ${ex.name}
+              ${isInjured ? '<span class="injury-warning">Skip</span>' : ''}
+            </div>
+            <div class="exercise-meta">${isInjured ? '⚠️ Cedera aktif — auto-skip' : 'Tap buat add ke hari ini'}</div>
+          </div>
+          <div class="exercise-actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); deleteFromLibrary(${ex.idx})">🗑</button>
+          </div>
+        `;
+        if (!isInjured) {
+          item.onclick = () => addExerciseToToday(ex.idx);
+        }
+        container.appendChild(item);
+      });
+    });
+  }
+
+  async function deleteFromLibrary(idx) {
+    const ex = exerciseLibrary[idx];
+    if (confirm(`Hapus "${ex.name}" dari library?`)) {
+      if (ex.id) {
+        const { error } = await sb.from('exercise_library').delete().eq('id', ex.id);
+        if (error) {
+          console.error('Delete library error:', JSON.stringify(error));
+          alert('Gagal hapus: ' + (error.message || JSON.stringify(error)));
+          return;
+        }
+      }
+      exerciseLibrary.splice(idx, 1);
+      renderLibrary();
+    }
+  }
+
+  function openAddExerciseToLibrary(fromPicker) {
+    if (fromPicker) {
+      document.getElementById('addToTodayModal').classList.remove('active');
+    }
+    document.getElementById('exerciseName').value = '';
+    document.getElementById('exerciseBodyPart').value = 'leg';
+    selectedExerciseEmoji = '🏋️';
+    document.querySelectorAll('#exerciseEmojiPicker .emoji-option').forEach(el => {
+      el.classList.toggle('selected', el.dataset.emoji === '🏋️');
+    });
+    setTimeout(() => {
+      document.getElementById('addToLibraryModal').classList.add('active');
+    }, fromPicker ? 200 : 0);
+  }
+
+  // Init exercise emoji picker
+  document.querySelectorAll('#exerciseEmojiPicker .emoji-option').forEach(el => {
+    el.onclick = () => {
+      document.querySelectorAll('#exerciseEmojiPicker .emoji-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedExerciseEmoji = el.dataset.emoji;
+    };
+  });
+
+  async function saveLibraryExercise() {
+    const name = document.getElementById('exerciseName').value.trim();
+    const bodyPart = document.getElementById('exerciseBodyPart').value;
+
+    if (!name) {
+      alert('Nama exercise wajib diisi!');
+      return;
+    }
+
+    // Check duplicate
+    if (exerciseLibrary.some(e => e.name.toLowerCase() === name.toLowerCase())) {
+      alert(`"${name}" udah ada di library!`);
+      return;
+    }
+
+    // Save to DB
+    const { data, error } = await sb
+      .from('exercise_library')
+      .insert({ name, emoji: selectedExerciseEmoji, body_part: bodyPart })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Save library exercise error:', JSON.stringify(error));
+      alert('Gagal simpan: ' + (error.message || JSON.stringify(error)));
+      return;
+    }
+
+    exerciseLibrary.push({
+      id: data.id,
+      emoji: selectedExerciseEmoji,
+      name,
+      bodyPart
+    });
+
+    document.getElementById('addToLibraryModal').classList.remove('active');
+    renderLibrary();
+  }
+
+  // ============ ADD EXERCISE TO TODAY ============
+
+  function openAddExerciseToToday() {
+    if (exerciseLibrary.length === 0) {
+      alert('Library lo masih kosong. Buat exercise dulu di tab Library.');
+      switchWorkoutTab('library');
+      return;
+    }
+
+    const container = document.getElementById('exercisePickerList');
+    container.innerHTML = '';
+
+    exerciseLibrary.forEach((ex, idx) => {
+      const isInjured = injuredBodyParts.includes(ex.bodyPart);
+      const item = document.createElement('div');
+      item.className = 'exercise-item' + (isInjured ? ' injury-flag' : '');
+      item.innerHTML = `
+        <div class="exercise-icon">${ex.emoji}</div>
+        <div class="exercise-info">
+          <div class="exercise-name">
+            ${ex.name}
+            ${isInjured ? '<span class="injury-warning">Skip</span>' : ''}
+          </div>
+          <div class="exercise-meta">${bodyPartLabels[ex.bodyPart]?.label || 'Other'}</div>
+        </div>
+      `;
+      if (isInjured) {
+        item.onclick = () => {
+          if (confirm(`⚠️ "${ex.name}" target body part yang lagi cedera. Yakin mau add?`)) {
+            addExerciseToToday(idx);
+          }
+        };
+      } else {
+        item.onclick = () => addExerciseToToday(idx);
+      }
+      container.appendChild(item);
+    });
+
+    document.getElementById('addToTodayModal').classList.add('active');
+  }
+
+  function addExerciseToToday(libIdx) {
+    const ex = exerciseLibrary[libIdx];
+    todayExercises.push({
+      name: ex.name,
+      emoji: ex.emoji,
+      bodyPart: ex.bodyPart,
+      sets: []
+    });
+    document.getElementById('addToTodayModal').classList.remove('active');
+    switchWorkoutTab('today');
+  }
+
+  // ============ LOG SETS ============
+
+  function openLogSets(idx) {
+    currentExerciseIdx = idx;
+    const ex = todayExercises[idx];
+
+    document.getElementById('logSetsTitle').textContent = ex.name;
+    document.getElementById('logSetsSubtitle').textContent = `${ex.emoji} ${bodyPartLabels[ex.bodyPart]?.label || 'Other'}`;
+
+    // Show previous performance from history
+    const prevPerf = getPreviousPerformance(ex.name);
+    const prevDiv = document.getElementById('prevPerformance');
+    if (prevPerf) {
+      prevDiv.innerHTML = `📊 <b>Last session:</b> ${prevPerf}`;
+      prevDiv.style.display = 'block';
+    } else {
+      prevDiv.style.display = 'none';
+    }
+
+    // Load existing sets or empty
+    currentSets = ex.sets && ex.sets.length > 0 ? [...ex.sets] : [{ weight: '', reps: '' }];
+    renderSets();
+
+    document.getElementById('logSetsModal').classList.add('active');
+  }
+
+  function getPreviousPerformance(exName) {
+    // Find most recent session with this exercise
+    for (let i = workoutHistory.length - 1; i >= 0; i--) {
+      const session = workoutHistory[i];
+      const ex = session.exercises.find(e => e.name === exName);
+      if (ex && ex.sets && ex.sets.length > 0) {
+        const setStr = ex.sets.map(s => `${s.weight}kg × ${s.reps}`).join(', ');
+        return `${session.date} — ${setStr}`;
+      }
+    }
+    return null;
+  }
+
+  function renderSets() {
+    const container = document.getElementById('setsContainer');
+    container.innerHTML = '';
+    currentSets.forEach((s, idx) => {
+      const row = document.createElement('div');
+      row.className = 'set-row';
+      row.innerHTML = `
+        <div class="set-num">${idx + 1}</div>
+        <input class="set-input" type="number" step="0.5" placeholder="0" value="${s.weight}" onchange="updateSet(${idx}, 'weight', this.value)">
+        <input class="set-input" type="number" placeholder="0" value="${s.reps}" onchange="updateSet(${idx}, 'reps', this.value)">
+        <button class="set-delete" onclick="removeSet(${idx})">×</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function updateSet(idx, field, value) {
+    currentSets[idx][field] = value;
+  }
+
+  function addSetRow() {
+    // Pre-fill with last set's weight as default
+    const lastWeight = currentSets.length > 0 ? currentSets[currentSets.length - 1].weight : '';
+    currentSets.push({ weight: lastWeight, reps: '' });
+    renderSets();
+  }
+
+  function removeSet(idx) {
+    if (currentSets.length <= 1) {
+      alert('Minimal 1 set');
+      return;
+    }
+    currentSets.splice(idx, 1);
+    renderSets();
+  }
+
+  async function saveExerciseSets() {
+    // Filter out empty sets
+    const validSets = currentSets.filter(s => s.weight && s.reps);
+    if (validSets.length === 0) {
+      alert('Isi minimal 1 set lengkap (weight + reps)');
+      return;
+    }
+    todayExercises[currentExerciseIdx].sets = validSets;
+    document.getElementById('logSetsModal').classList.remove('active');
+    renderToday();
+
+    // Persist to DB — reuses today's session, doesn't duplicate
+    const ex = todayExercises[currentExerciseIdx];
+    const saved = await saveExerciseToSession(ex);
+    if (saved) {
+      console.log('Exercise saved to DB:', saved);
+    }
+  }
+
+  // ============ CARDIO ============
+
+  function openAddCardio() {
+    document.getElementById('cardioAnalysis').classList.remove('show');
+    document.getElementById('addCardioModal').classList.add('active');
+  }
+
+  function simulateCardioAnalyze() {
+    document.getElementById('cardioAnalysis').classList.remove('show');
+    setTimeout(() => {
+      document.getElementById('cardioAnalysis').classList.add('show');
+    }, 1000);
+  }
+
+  function saveCardio() {
+    // From AI analysis
+    todayCardio.push({
+      type: 'Treadmill incline',
+      duration: 30,
+      distance: 2.5,
+      calories: 420,
+      incline: '15%',
+      source: 'photo'
+    });
+    document.getElementById('addCardioModal').classList.remove('active');
+    document.getElementById('cardioAnalysis').classList.remove('show');
+    renderToday();
+  }
+
+  function openManualCardio() {
+    document.getElementById('addCardioModal').classList.remove('active');
+    document.getElementById('cardioType').value = 'Jogging outdoor';
+    document.getElementById('cardioDuration').value = '';
+    document.getElementById('cardioDistance').value = '';
+    document.getElementById('cardioCalories').value = '';
+    setTimeout(() => {
+      document.getElementById('manualCardioModal').classList.add('active');
+    }, 200);
+  }
+
+  function saveManualCardio() {
+    const type = document.getElementById('cardioType').value;
+    const duration = parseInt(document.getElementById('cardioDuration').value) || 0;
+    const distance = parseFloat(document.getElementById('cardioDistance').value) || 0;
+    const calories = parseInt(document.getElementById('cardioCalories').value) || 0;
+
+    if (!duration) {
+      alert('Durasi wajib diisi');
+      return;
+    }
+
+    todayCardio.push({
+      type, duration, distance, calories, source: 'manual'
+    });
+    document.getElementById('manualCardioModal').classList.remove('active');
+    renderToday();
+  }
+
+  // ============ HISTORY ============
+
+  function renderWorkoutHistory() {
+    const container = document.getElementById('workoutHistory');
+    if (workoutHistory.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📊</div>
+          <div class="empty-title">Belum ada history</div>
+          <div class="empty-desc">Workout yang lo log hari ini bakal masuk history setelah end of day. Lo bisa lihat progress beban tiap minggu di sini.</div>
+        </div>
+      `;
+      return;
+    }
+    // History rendering would go here
+    container.innerHTML = '';
+    workoutHistory.forEach(session => {
+      const item = document.createElement('div');
+      item.className = 'exercise-item';
+      item.innerHTML = `
+        <div class="exercise-icon">📅</div>
+        <div class="exercise-info">
+          <div class="exercise-name">${session.date}</div>
+          <div class="exercise-meta">${session.exercises.length} exercises</div>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }
+
+  // Initial render
+  setTimeout(() => {
+    if (document.getElementById('todayExercises')) renderToday();
+  }, 100);
+
+  // ============ QUICK ADD CUSTOM ITEMS ============
+
+  // Templates
+  const templates = {
+    cutting: [
+      {emoji: '🥛', name: '1 scoop protein', kcal: 126, p: 24, c: 3, f: 1},
+      {emoji: '🍗', name: '250g dada ayam', kcal: 410, p: 78, c: 0, f: 8},
+      {emoji: '🥜', name: '15 almond', kcal: 90, p: 3, c: 3, f: 8},
+      {emoji: '🍠', name: '100g ubi', kcal: 110, p: 2, c: 25, f: 0},
+    ],
+    bulking: [
+      {emoji: '🥛', name: 'Mass gainer 1 scoop', kcal: 380, p: 25, c: 60, f: 3},
+      {emoji: '🍗', name: '300g dada ayam', kcal: 495, p: 93, c: 0, f: 10},
+      {emoji: '🍚', name: '200g nasi', kcal: 260, p: 5, c: 56, f: 0},
+      {emoji: '🍌', name: '2 pisang', kcal: 210, p: 2, c: 54, f: 1},
+    ],
+    maintain: [
+      {emoji: '🥛', name: '1 scoop protein', kcal: 126, p: 24, c: 3, f: 1},
+      {emoji: '🍗', name: '200g dada ayam', kcal: 330, p: 62, c: 0, f: 7},
+      {emoji: '🍚', name: '150g nasi', kcal: 195, p: 4, c: 42, f: 0},
+      {emoji: '🥜', name: '20 almond', kcal: 120, p: 4, c: 4, f: 11},
+    ],
+  };
+
+  // Initial quick add items (default: cutting template)
+  let quickItems = [...templates.cutting];
+  let editMode = false;
+  let selectedEmoji = '🍗';
+  let selectedTemplate = 'cutting';
+  const MAX_ITEMS = 8;
+
+  function renderQuickActions() {
+    const container = document.getElementById('quickActions');
+    container.innerHTML = '';
+
+    quickItems.forEach((item, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quick-btn' + (editMode ? ' edit-mode' : '');
+      btn.innerHTML = `
+        <span class="quick-btn-icon">${item.emoji}</span>
+        <span>${item.name}</span>
+        ${editMode ? `<span class="quick-btn-delete" onclick="deleteItem(${idx}); event.stopPropagation();">×</span>` : ''}
+      `;
+      btn.onclick = async () => {
+        if (!editMode) {
+          const saved = await saveMealToDb({
+            name: item.name,
+            emoji: item.emoji,
+            kcal: item.kcal,
+            p: item.p,
+            c: item.c,
+            f: item.f,
+            source: 'quick_add'
+          });
+          if (saved) {
+            renderTodayMeals();
+          }
+        }
+      };
+      container.appendChild(btn);
+    });
+
+    // Add "+" button if under max
+    if (quickItems.length < MAX_ITEMS) {
+      const addBtn = document.createElement('button');
+      addBtn.className = 'quick-btn-add';
+      addBtn.innerHTML = `<span>➕</span><span>Tambah quick add</span>`;
+      addBtn.onclick = () => openCustomItemModal();
+      container.appendChild(addBtn);
+    }
+
+    // Show item count in edit mode
+    if (editMode && quickItems.length >= MAX_ITEMS) {
+      const note = document.createElement('div');
+      note.style.cssText = 'grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 11px; padding: 8px;';
+      note.textContent = `Max ${MAX_ITEMS} items reached`;
+      container.appendChild(note);
+    }
+  }
+
+  function toggleEditMode() {
+    editMode = !editMode;
+    const toggleBtn = document.getElementById('editToggle');
+    toggleBtn.textContent = editMode ? 'Selesai' : 'Edit';
+    toggleBtn.classList.toggle('active', editMode);
+    renderQuickActions();
+  }
+
+  function deleteItem(idx) {
+    if (confirm(`Hapus "${quickItems[idx].name}" dari quick add?`)) {
+      quickItems.splice(idx, 1);
+      renderQuickActions();
+    }
+  }
+
+  function openCustomItemModal() {
+    document.getElementById('customItemModal').classList.add('active');
+    // Reset form
+    document.getElementById('inputName').value = '';
+    document.getElementById('inputKcal').value = '';
+    document.getElementById('inputProtein').value = '';
+    document.getElementById('inputCarbs').value = '';
+    document.getElementById('inputFat').value = '';
+    selectedEmoji = '🍗';
+    document.querySelectorAll('.emoji-option').forEach(el => {
+      el.classList.toggle('selected', el.dataset.emoji === '🍗');
+    });
+  }
+
+  // Emoji picker
+  document.querySelectorAll('.emoji-option').forEach(el => {
+    el.onclick = () => {
+      document.querySelectorAll('.emoji-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedEmoji = el.dataset.emoji;
+    };
+  });
+
+  function saveCustomItem() {
+    const name = document.getElementById('inputName').value.trim();
+    const kcal = parseInt(document.getElementById('inputKcal').value) || 0;
+    const p = parseInt(document.getElementById('inputProtein').value) || 0;
+    const c = parseInt(document.getElementById('inputCarbs').value) || 0;
+    const f = parseInt(document.getElementById('inputFat').value) || 0;
+
+    if (!name || !kcal) {
+      alert('Nama dan kalori wajib diisi!');
+      return;
+    }
+
+    if (quickItems.length >= MAX_ITEMS) {
+      alert(`Max ${MAX_ITEMS} items. Hapus dulu yang lama.`);
+      return;
+    }
+
+    quickItems.push({emoji: selectedEmoji, name, kcal, p, c, f});
+    document.getElementById('customItemModal').classList.remove('active');
+    renderQuickActions();
+  }
+
+  // ============ TEMPLATE SELECTOR ============
+
+  function openTemplateModal() {
+    document.getElementById('templateModal').classList.add('active');
+    document.querySelectorAll('.template-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.template === selectedTemplate);
+    });
+  }
+
+  function selectTemplate(t) {
+    selectedTemplate = t;
+    document.querySelectorAll('.template-card').forEach(c => {
+      c.classList.toggle('selected', c.dataset.template === t);
+    });
+  }
+
+  function applyTemplate() {
+    if (quickItems.length > 0 && !confirm('Ganti quick add lo dengan template? Item yang ada bakal di-replace.')) {
+      return;
+    }
+    quickItems = [...templates[selectedTemplate]];
+    document.getElementById('templateModal').classList.remove('active');
+    renderQuickActions();
+
+    // Update active template label
+    const templateNames = {
+      cutting: 'Cutting 📉',
+      bulking: 'Bulking 📈',
+      maintain: 'Maintain ⚖️'
+    };
+    const el = document.getElementById('activeTemplate');
+    if (el) el.textContent = templateNames[selectedTemplate];
+  }
+
+  // Init
+  renderQuickActions();
+
+  // Override closeModalOnBackdrop to support multiple modals
+  function openModal() {
+    document.getElementById('mealNameInput').value = '';
+    document.getElementById('mealKcalInput').value = '';
+    document.getElementById('mealProteinInput').value = '';
+    document.getElementById('mealCarbsInput').value = '';
+    document.getElementById('mealFatInput').value = '';
+    document.getElementById('mealModal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('mealModal').classList.remove('active');
+  }
+
+  async function submitManualMeal() {
+    const name = document.getElementById('mealNameInput').value.trim();
+    const kcal = parseInt(document.getElementById('mealKcalInput').value) || 0;
+    const protein = parseFloat(document.getElementById('mealProteinInput').value) || 0;
+    const carbs = parseFloat(document.getElementById('mealCarbsInput').value) || 0;
+    const fat = parseFloat(document.getElementById('mealFatInput').value) || 0;
+
+    if (!name || !kcal) {
+      alert('Nama dan kalori wajib diisi');
+      return;
+    }
+
+    const saved = await saveMealToDb({
+      name, kcal, p: protein, c: carbs, f: fat, source: 'manual'
+    });
+
+    if (saved) {
+      closeModal();
+      await renderTodayMeals();
+    }
+  }
+
+  function closeModalOnBackdrop(e, modalId) {
+    if (e.target.classList.contains('modal')) {
+      if (modalId) {
+        document.getElementById(modalId).classList.remove('active');
+      } else {
+        closeModal();
+      }
+    }
+  }
+
+  function simulateAnalyze() {
+    setTimeout(() => {
+      document.getElementById('analyzedResult').classList.add('show');
+    }, 800);
+  }
+</script>
+
+</body>
+</html>
+
     --text: #F5F1E8;
     --text-muted: #8B92A0;
     --accent: #E8B647;
