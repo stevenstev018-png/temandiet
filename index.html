@@ -4104,18 +4104,21 @@ Bahu: --/10`;
     const todayMax = Math.max(...exercise.sets.map(s => parseFloat(s.weight) || 0));
     if (todayMax === 0) return false;
 
-    // Check history for same exercise
+    // Check history for same exercise (guard against missing structure)
     let historyMax = 0;
-    workoutHistory.forEach(session => {
-      session.exercises.forEach(ex => {
-        if (ex.name === exercise.name && ex.sets) {
-          ex.sets.forEach(s => {
-            const w = parseFloat(s.weight) || 0;
-            if (w > historyMax) historyMax = w;
-          });
-        }
+    if (Array.isArray(workoutHistory)) {
+      workoutHistory.forEach(session => {
+        if (!session || !Array.isArray(session.exercises)) return;
+        session.exercises.forEach(ex => {
+          if (ex && ex.name === exercise.name && Array.isArray(ex.sets)) {
+            ex.sets.forEach(s => {
+              const w = parseFloat(s.weight) || 0;
+              if (w > historyMax) historyMax = w;
+            });
+          }
+        });
       });
-    });
+    }
 
     return todayMax > historyMax;
   }
@@ -4261,7 +4264,11 @@ Bahu: --/10`;
 
   // ============ ADD EXERCISE TO TODAY ============
 
-  function openAddExerciseToToday() {
+  async function openAddExerciseToToday() {
+    // Ensure library is loaded from DB (may be empty in memory if user hasn't opened Library tab)
+    if (exerciseLibrary.length === 0) {
+      await loadExerciseLibrary();
+    }
     if (exerciseLibrary.length === 0) {
       alert('Library lo masih kosong. Buat exercise dulu di tab Library.');
       switchWorkoutTab('library');
