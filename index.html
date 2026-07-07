@@ -4168,6 +4168,7 @@ Bahu: --/10`;
             <div class="exercise-meta">${isInjured ? '⚠️ Cedera aktif — auto-skip' : 'Tap buat add ke hari ini'}</div>
           </div>
           <div class="exercise-actions">
+            <button class="icon-btn" onclick="event.stopPropagation(); openExerciseDetail('${ex.name.replace(/'/g, "\\'")}')">📈</button>
             <button class="icon-btn" onclick="event.stopPropagation(); deleteFromLibrary(${ex.idx})">🗑</button>
           </div>
         `;
@@ -4465,32 +4466,112 @@ Bahu: --/10`;
 
   // ============ HISTORY ============
 
-  function renderWorkoutHistory() {
+  async function openExerciseDetail(exerciseName) {
+    // Find all exercise_logs with this name, join to sets and session date
+    const { data: logs, error } = await sb
+      .from('exercise_logs')
+      .select('id, session_id, exercise_name')
+      .eq('exercise_name', exerciseName);
+
+    if (error || !logs || logs.length === 0) {
+      alert(`Belum ada data tercatat buat "${exerciseName}". Log dulu di tab Hari Ini (isi sets + Simpan Log).`);
+      return;
+    }
+
+    // Get session dates
+    const sessionIds = [...new Set(logs.map(l => l.session_id))];
+    const { data: sessions } = await sb
+      .from('workout_sessions')
+      .select('id, date')
+      .in('id', sessionIds);
+    const dateById = {};
+    (sessions || []).forEach(s => { dateById[s.id] = s.date; });
+
+    // Get all sets per log
+    const logIds = logs.map(l => l.id);
+    const { data: allSets } = await sb
+      .from('sets')
+      .select('exercise_log_id, weight_kg, reps, set_number')
+      .in('exercise_log_id', logIds)
+      .order('set_number', { ascending: true });
+
+    // Group sets by date
+    const byDate = {};
+    (allSets || []).forEach(s => {
+      const log = logs.find(l => l.id === s.exercise_log_id);
+      const date = dateById[log.session_id];
+      if (!byDate[date]) byDate[date] = [];
+      byDate[date].push(s);
+    });
+
+    // Build text summary, newest first
+    const dates = Object.keys(byDate).sort().reverse();
+    let maxWeight = 0;
+    let summary = `📈 ${exerciseName}\n\n`;
+    dates.forEach(date => {
+      const sets = byDate[date];
+      const setStr = sets.map(s => `${s.weight_kg}kg×${s.reps}`).join(', ');
+      const dayMax = Math.max(...sets.map(s => s.weight_kg || 0));
+      if (dayMax > maxWeight) maxWeight = dayMax;
+      summary += `${formatDateID(date)}: ${setStr}\n`;
+    });
+    summary += `\n🏆 Beban terberat: ${maxWeight}kg`;
+
+    alert(summary);
+  }
+
+  async function renderWorkoutHistory() {
     const container = document.getElementById('workoutHistory');
-    if (workoutHistory.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">Loading...</div>';
+
+    // Load all sessions, newest first
+    const { data: sessions, error } = await sb
+      .from('workout_sessions')
+      .select('id, date')
+      .order('date', { ascending: false });
+
+    if (error) {
+      console.error('History load error:', JSON.stringify(error));
+      container.innerHTML = '<div style="text-align:center;padding:20px;color:var(--danger);font-size:13px;">Gagal load history</div>';
+      return;
+    }
+
+    if (!sessions || sessions.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">📊</div>
           <div class="empty-title">Belum ada history</div>
-          <div class="empty-desc">Workout yang lo log hari ini bakal masuk history setelah end of day. Lo bisa lihat progress beban tiap minggu di sini.</div>
-        </div>
-      `;
+          <div class="empty-desc">Log workout di tab Hari Ini (isi sets + Simpan Log). Nanti muncul di sini per tanggal.</div>
+        </div>`;
       return;
     }
-    // History rendering would go here
+
     container.innerHTML = '';
-    workoutHistory.forEach(session => {
+    for (const session of sessions) {
+      const { data: logs } = await sb
+        .from('exercise_logs')
+        .select('exercise_name')
+        .eq('session_id', session.id);
+      const count = logs ? logs.length : 0;
+      const names = logs ? logs.map(l => l.exercise_name).slice(0,3).join(', ') : '';
+
       const item = document.createElement('div');
       item.className = 'exercise-item';
       item.innerHTML = `
         <div class="exercise-icon">📅</div>
         <div class="exercise-info">
-          <div class="exercise-name">${session.date}</div>
-          <div class="exercise-meta">${session.exercises.length} exercises</div>
+          <div class="exercise-name">${formatDateID(session.date)}</div>
+          <div class="exercise-meta">${count} exercise${count>1?'s':''}${names ? ' · ' + names : ''}</div>
         </div>
       `;
       container.appendChild(item);
-    });
+    }
+  }
+
+  function formatDateID(dateStr) {
+    const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Ags','Sep','Okt','Nov','Des'];
+    const d = new Date(dateStr + 'T00:00:00');
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }
 
   // Initial render
